@@ -1,0 +1,31 @@
+PALISADE Linux
+Copyright (C) 2026 PALISADE Linux Project
+
+This project is licensed under the GNU General Public License, version 3 or (at your option) any later version.
+
+You may redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation.
+
+A copy of the GNU General Public License should accompany this project. If it does not, see:
+
+https://www.gnu.org/licenses/gpl-3.0.html
+
+## Important Licensing Notice
+
+This licence applies only to software files and other materials explicitly identified as being distributed under the GNU General Public License.
+
+The following materials are excluded unless explicitly licensed otherwise:
+
+- PALISADE Linux name and trademarks.
+- PALISADE logos and emblems.
+- Castle-and-cloud artwork.
+- Official wallpapers and promotional artwork.
+- Boot animation artwork and graphical branding.
+- Other materials explicitly identified as proprietary or separately licensed.
+
+Third-party components, packages, tools, libraries and dependencies retain their respective copyright notices and licence conditions.
+
+Nothing in this licence grants permission to use the PALISADE name, trademarks or branding in a way that suggests official endorsement, affiliation or authorisation.
+
+For the complete GPL-3.0-or-later licence text, consult:
+
+https://www.gnu.org/licenses/gpl-3.0.txt

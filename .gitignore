@@ -1,0 +1,97 @@
+# ---------------------------------------------------------------------------
+# PALISADE Linux - Git ignore rules
+# ---------------------------------------------------------------------------
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+*.secret
+*.secrets
+secrets/
+credentials/
+credentials.json
+service-account*.json
+.netrc
+
+# Private keys and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+id_ecdsa
+id_ecdsa.*
+
+# Cloud authentication and infrastructure state
+.aws/
+.azure/
+.gcloud/
+.config/gcloud/
+kubeconfig
+*.kubeconfig
+.docker/config.json
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+.ansible/
+
+# Build output and artefacts
+build/output/*
+!build/output/.gitkeep
+*.iso
+*.img
+*.squashfs
+*.raw
+*.vdi
+*.vmdk
+*.qcow2
+*.deb
+*.dsc
+*.changes
+*.buildinfo
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.*.swp
+
+# Operating system temporary files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.temp
+*.bak
+.cache/
+
+# Local test and scratch files
+*.local
+scratch/
+tmp/
