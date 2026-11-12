@@ -1,9 +1,9 @@
 MIT License
 
-Copyright (c) 2026 PALISADE Linux Project Contributors
+Copyright (c) 2026 VELCORA Linux Project Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of the original PALISADE Linux project software and associated documentation
+of the original VELCORA Linux project software and associated documentation
 files (the "Software"), to deal in the Software without restriction,
 including without limitation the rights to use, copy, modify, merge,
 publish, distribute, sublicense, and/or sell copies of the Software, and
@@ -25,12 +25,12 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ## Third-Party Software and Components
 
-PALISADE Linux is an operating system distribution that incorporates or may
+VELCORA Linux is an operating system distribution that incorporates or may
 incorporate software, packages, libraries, drivers, utilities and other
 components developed by third parties.
 
-The MIT License above applies only to original PALISADE project materials
-whose licensing is controlled by the PALISADE project contributors.
+The MIT License above applies only to original VELCORA project materials
+whose licensing is controlled by the VELCORA project contributors.
 
 Third-party components remain subject to their respective licences,
 copyright notices and distribution requirements.
@@ -39,9 +39,9 @@ This licence does not relicense the Linux kernel, Debian packages,
 third-party applications, external dependencies or other independently
 licensed materials.
 
-## PALISADE Branding and Artwork
+## VELCORA Branding and Artwork
 
-The PALISADE name, logos, icons, wallpapers, visual identity and other
+The VELCORA name, logos, icons, wallpapers, visual identity and other
 branding materials are not automatically covered by the software licence
 above.
 
@@ -54,5 +54,5 @@ For the full MIT License text and further information, visit:
 
 https://opensource.org/license/mit
 
-For questions about licensing, contact the PALISADE project maintainers
+For questions about licensing, contact the VELCORA project maintainers
 through the official project support channels.

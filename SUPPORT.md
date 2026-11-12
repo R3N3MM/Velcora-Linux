@@ -1,10 +1,10 @@
-# PALISADE Linux Support
+# VELCORA Linux Support
 
 ## 1. Welcome
 
-Welcome to PALISADE Linux Support.
+Welcome to VELCORA Linux Support.
 
-PALISADE is a Debian-based Linux operating system focused on Cloud Administration.
+VELCORA is a Debian-based Linux operating system focused on Cloud Administration.
 
 This document explains how users, administrators, developers and community members can request assistance.
 
@@ -12,7 +12,7 @@ The goal is to make support organised, accessible and useful.
 
 ## 2. Where to Get Help
 
-The official PALISADE GitHub repository should be the primary location for project support.
+The official VELCORA GitHub repository should be the primary location for project support.
 
 The following channels should be used for different types of requests.
 
@@ -41,13 +41,13 @@ Use GitHub Discussions for:
 - Feature proposals.
 - Community assistance.
 - Development discussions.
-- Ideas for improving PALISADE.
+- Ideas for improving VELCORA.
 
 Discussions should not be used to publish sensitive security vulnerabilities.
 
 ### Documentation
 
-Before requesting assistance, users should consult the available PALISADE documentation.
+Before requesting assistance, users should consult the available VELCORA documentation.
 
 Documentation should include:
 
@@ -65,7 +65,7 @@ When reporting a bug, provide as much relevant information as possible.
 
 A useful report should include:
 
-1. PALISADE version.
+1. VELCORA version.
 2. Kernel version, if known.
 3. Hardware configuration.
 4. A description of the problem.
@@ -162,7 +162,7 @@ Maintainers should:
 
 ## 9. Support Limitations
 
-PALISADE is a developing operating system project.
+VELCORA is a developing operating system project.
 
 During early development:
 
@@ -177,17 +177,17 @@ The project does not guarantee immediate responses or fixes.
 
 ## 10. Third-Party Software
 
-PALISADE may include software maintained by external developers and projects.
+VELCORA may include software maintained by external developers and projects.
 
 Issues affecting third-party components may need to be reported to their respective upstream maintainers.
 
-The PALISADE team will determine whether a problem originates from PALISADE configuration, system integration or an upstream component.
+The VELCORA team will determine whether a problem originates from VELCORA configuration, system integration or an upstream component.
 
 ## 11. Official Support Channels
 
 Official repository:
 
-[Insert official PALISADE GitHub repository URL]
+[Insert official VELCORA GitHub repository URL]
 
 GitHub Issues:
 
@@ -209,8 +209,8 @@ These addresses must be updated once the official project channels have been est
 
 ## 12. Final Statement
 
-PALISADE Linux aims to provide a helpful and organised support environment.
+VELCORA Linux aims to provide a helpful and organised support environment.
 
 The project encourages users to report problems, contribute solutions and help improve the operating system.
 
-Community support is an important part of making PALISADE reliable, secure and maintainable.
+Community support is an important part of making VELCORA reliable, secure and maintainable.

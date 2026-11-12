@@ -1,10 +1,10 @@
-# PALISADE Linux Security Policy
+# VELCORA Linux Security Policy
 
 ## 1. Purpose
 
-Security is a core requirement of PALISADE Linux.
+Security is a core requirement of VELCORA Linux.
 
-PALISADE is a Debian-based Linux operating system focused on Cloud Administration.
+VELCORA is a Debian-based Linux operating system focused on Cloud Administration.
 
 This document explains how security vulnerabilities should be reported, investigated and addressed.
 
@@ -12,7 +12,7 @@ It also establishes security expectations for contributors and maintainers.
 
 ## 2. Supported Versions
 
-PALISADE is currently under development.
+VELCORA is currently under development.
 
 Until official stable releases are published, security support is provided on a best-effort basis for active development branches.
 
@@ -32,7 +32,7 @@ The project must not promise security support periods that it cannot maintain.
 
 Do not publish sensitive security vulnerabilities in public GitHub Issues or Discussions.
 
-Report vulnerabilities through the private reporting mechanism configured for the official PALISADE GitHub repository.
+Report vulnerabilities through the private reporting mechanism configured for the official VELCORA GitHub repository.
 
 The project should enable GitHub private vulnerability reporting where available.
 
@@ -45,7 +45,7 @@ Do not send vulnerability reports to unofficial accounts.
 A vulnerability report should include as much of the following information as possible:
 
 - A clear vulnerability description.
-- Affected PALISADE version or development branch.
+- Affected VELCORA version or development branch.
 - Affected component.
 - Steps required to reproduce the issue.
 - Expected behaviour.
@@ -195,7 +195,7 @@ Sensitive technical information should be handled carefully to avoid exposing us
 
 ## 14. Security Research
 
-PALISADE welcomes responsible security research that helps improve the operating system.
+VELCORA welcomes responsible security research that helps improve the operating system.
 
 Research must remain within lawful and authorised testing boundaries.
 
@@ -209,6 +209,6 @@ Changes should be documented and approved according to the project governance pr
 
 ## 16. Final Statement
 
-PALISADE Linux takes security seriously.
+VELCORA Linux takes security seriously.
 
 The project aims to maintain a responsible vulnerability reporting process, improve system security continuously and protect the integrity of the operating system and its users.

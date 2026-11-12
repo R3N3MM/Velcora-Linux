@@ -1,16 +1,16 @@
-# PALISADE Linux Project Governance
+# VELCORA Linux Project Governance
 
 ## 1. Purpose
 
-This document defines how PALISADE Linux is managed, how project decisions are made and how responsibilities are assigned.
+This document defines how VELCORA Linux is managed, how project decisions are made and how responsibilities are assigned.
 
-PALISADE is a community-supported, Debian-based Linux operating system focused on Cloud Administration.
+VELCORA is a community-supported, Debian-based Linux operating system focused on Cloud Administration.
 
 The governance model is intended to provide transparency, accountability, security and long-term project continuity.
 
 ## 2. Governance Principles
 
-PALISADE governance follows these principles:
+VELCORA governance follows these principles:
 
 - Transparent decision-making.
 - Documented technical decisions.
@@ -26,7 +26,7 @@ PALISADE governance follows these principles:
 
 ### 3.1 Project Owner
 
-The Project Owner is responsible for the overall direction and administration of PALISADE.
+The Project Owner is responsible for the overall direction and administration of VELCORA.
 
 Responsibilities include:
 
@@ -271,7 +271,7 @@ Private security reports and confidential information must remain protected.
 
 ## 13. Project Continuity
 
-PALISADE should not depend entirely on undocumented knowledge held by one person.
+VELCORA should not depend entirely on undocumented knowledge held by one person.
 
 Important project information must be maintained in the official repository.
 
@@ -286,7 +286,7 @@ This includes:
 
 ## 14. Governance Changes
 
-This governance document may be updated as PALISADE grows.
+This governance document may be updated as VELCORA grows.
 
 Proposed changes should be discussed and documented.
 
@@ -294,6 +294,6 @@ Major governance changes require Project Owner approval.
 
 ## 15. Final Statement
 
-PALISADE Linux aims to build a transparent and responsible open-source development community.
+VELCORA Linux aims to build a transparent and responsible open-source development community.
 
 Its governance structure must support collaboration while protecting the project's architecture, security, infrastructure and long-term direction.

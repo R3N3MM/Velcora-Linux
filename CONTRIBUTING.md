@@ -1,8 +1,8 @@
-# Contributing to PALISADE Linux
+# Contributing to VELCORA Linux
 
-Thank you for your interest in contributing to PALISADE Linux.
+Thank you for your interest in contributing to VELCORA Linux.
 
-PALISADE is a Debian-based Linux operating system focused on Cloud Administration.
+VELCORA is a Debian-based Linux operating system focused on Cloud Administration.
 
 The project welcomes contributions from developers, Linux users, students, administrators, security researchers, testers, documentation writers and designers.
 
@@ -17,7 +17,7 @@ Before making changes:
 3. Read the CODE_OF_CONDUCT.md.
 4. Read the SECURITY.md.
 5. Check existing GitHub Issues and Discussions.
-6. Confirm that your proposed contribution fits the purpose of PALISADE.
+6. Confirm that your proposed contribution fits the purpose of VELCORA.
 
 For major changes, discuss the proposal with the maintainers before implementation.
 
@@ -83,7 +83,7 @@ Design submissions must follow the project's branding and asset requirements.
 
 ## 3. Repository Setup
 
-Fork the official PALISADE repository to your GitHub account.
+Fork the official VELCORA repository to your GitHub account.
 
 Clone your fork:
 
@@ -94,7 +94,7 @@ git clone YOUR_FORK_URL
 Enter the repository:
 
 ```bash
-cd "Palisade Linux"
+cd "Velcora Linux"
 ```
 
 Configure the original repository as the upstream remote:
@@ -178,7 +178,7 @@ Code must be suitable for long-term maintenance.
 
 ## 7. Security Requirements
 
-Security is a core PALISADE development requirement.
+Security is a core VELCORA development requirement.
 
 Contributors must:
 
@@ -266,7 +266,7 @@ By submitting a contribution, you confirm that:
 - Your contribution does not knowingly violate another person's rights.
 - You agree to the project's contribution licensing terms.
 
-Original PALISADE project code is intended to use the MIT License unless a component has a separately documented licence.
+Original VELCORA project code is intended to use the MIT License unless a component has a separately documented licence.
 
 Third-party materials retain their own licensing requirements.
 
@@ -280,7 +280,7 @@ Follow SECURITY.md for security reporting.
 
 ## 14. Recognition
 
-PALISADE values community contributions.
+VELCORA values community contributions.
 
 Meaningful contributions may be recognised in:
 
@@ -291,8 +291,8 @@ Meaningful contributions may be recognised in:
 
 ## 15. Final Requirements
 
-Every contribution must support the purpose of PALISADE Linux.
+Every contribution must support the purpose of VELCORA Linux.
 
 The project prioritises security, reliability, maintainability, clear documentation and responsible development.
 
-Thank you for helping build PALISADE Linux.
+Thank you for helping build VELCORA Linux.

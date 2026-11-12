@@ -1,14 +1,14 @@
-# PALISADE Linux Code of Conduct
+# VELCORA Linux Code of Conduct
 
 ## 1. Our Commitment
 
-PALISADE Linux is an open-source community project focused on Cloud Administration.
+VELCORA Linux is an open-source community project focused on Cloud Administration.
 
 We want to create a professional, welcoming and respectful environment where people can learn, contribute, share knowledge and work together.
 
 We welcome contributors regardless of their experience level, technical background, nationality, age, disability or personal circumstances.
 
-Everyone participating in the PALISADE community is expected to follow this Code of Conduct.
+Everyone participating in the VELCORA community is expected to follow this Code of Conduct.
 
 ## 2. Expected Behaviour
 
@@ -58,7 +58,7 @@ Contributors should avoid:
 
 ## 5. Project Security
 
-Community members must respect PALISADE security procedures.
+Community members must respect VELCORA security procedures.
 
 They must not:
 
@@ -113,17 +113,17 @@ Project authority does not give anyone permission to harass, intimidate or mistr
 
 This Code of Conduct applies to:
 
-- Official PALISADE GitHub repositories.
+- Official VELCORA GitHub repositories.
 - GitHub Issues and Discussions.
 - Pull requests.
 - Official project communication channels.
-- Community events organised by PALISADE.
-- Other spaces where someone is officially representing PALISADE.
+- Community events organised by VELCORA.
+- Other spaces where someone is officially representing VELCORA.
 
 ## 10. Final Statement
 
-PALISADE Linux depends on cooperation, technical responsibility and mutual respect.
+VELCORA Linux depends on cooperation, technical responsibility and mutual respect.
 
 Every contributor has a responsibility to help maintain a professional and safe development environment.
 
-By participating in the PALISADE community, contributors agree to follow this Code of Conduct.
+By participating in the VELCORA community, contributors agree to follow this Code of Conduct.
