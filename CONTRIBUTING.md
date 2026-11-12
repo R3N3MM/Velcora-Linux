@@ -2,218 +2,297 @@
 
 Thank you for your interest in contributing to PALISADE Linux.
 
-PALISADE is an independent Debian-based operating system focused exclusively on cloud administration and infrastructure management.
+PALISADE is a Debian-based Linux operating system focused on Cloud Administration.
 
-Contributions should improve the reliability, usability, security, maintainability and functionality of the distribution.
+The project welcomes contributions from developers, Linux users, students, administrators, security researchers, testers, documentation writers and designers.
 
-This document establishes the contribution standards and development expectations for the project.
+This document explains how to contribute safely and effectively.
 
----
+## 1. Before Contributing
 
-## 1. Project Philosophy
+Before making changes:
 
-All contributions must align with the primary purpose of PALISADE Linux.
+1. Read the project README.md.
+2. Review the repository architecture.
+3. Read the CODE_OF_CONDUCT.md.
+4. Read the SECURITY.md.
+5. Check existing GitHub Issues and Discussions.
+6. Confirm that your proposed contribution fits the purpose of PALISADE.
 
-The project focuses on:
+For major changes, discuss the proposal with the maintainers before implementation.
 
-- Cloud administration.
-- Infrastructure management.
-- Infrastructure as Code.
-- Cloud automation.
-- Container management.
-- Infrastructure monitoring.
-- Networking and system administration.
-- Cloud storage and database management.
-- Infrastructure security.
+## 2. Ways to Contribute
 
-Contributions unrelated to these areas may be rejected.
+You can contribute through:
 
-## 2. Repository Structure
+### Software Development
 
-Contributors must place files in the appropriate project directories.
+- Fixing bugs.
+- Improving existing functionality.
+- Developing new features.
+- Improving system configuration.
+- Writing scripts.
+- Improving automation.
+- Adding tests.
 
-| Directory | Contribution Area |
-|---|---|
-| branding/ | Visual identity and artwork |
-| build/ | ISO building and automation |
-| debian/ | Debian integration |
-| desktop/ | Xfce and desktop configuration |
-| boot/ | GRUB and Plymouth |
-| packages/ | Debian package development |
-| cloud/ | Cloud administration |
-| infrastructure/ | Infrastructure management |
-| repository/ | Package repository management |
-| testing/ | Testing and validation |
-| documentation/ | Technical documentation |
-| scripts/ | Development automation |
+### Cloud Administration
 
-Do not place unrelated files in the project root.
+- Improving administration workflows.
+- Developing relevant utilities.
+- Improving configuration procedures.
+- Writing administration documentation.
+- Testing supported functionality.
 
-## 3. Code Quality
+### Security
 
-All contributions must follow these requirements:
+- Reviewing system configurations.
+- Identifying security weaknesses.
+- Improving defensive controls.
+- Reviewing dependencies.
+- Improving security documentation.
 
-1. Use clear and descriptive names.
-2. Keep code modular and maintainable.
-3. Avoid unnecessary dependencies.
-4. Include comments where functionality is not immediately obvious.
-5. Handle errors appropriately.
-6. Avoid hardcoded credentials and sensitive information.
-7. Follow established project conventions.
-8. Test changes before submitting them.
+Security vulnerabilities must be reported privately according to SECURITY.md.
 
-Do not introduce unnecessary complexity.
+### Documentation
 
-## 4. Debian Compatibility
+- Writing installation instructions.
+- Improving administrator guides.
+- Correcting errors.
+- Adding troubleshooting procedures.
+- Improving technical explanations.
+- Updating outdated information.
 
-PALISADE is built on the Debian ecosystem.
+### Testing
 
-Contributions involving packages or system configuration must:
+- Testing installation images.
+- Testing system updates.
+- Checking hardware compatibility.
+- Reporting bugs.
+- Testing system recovery.
+- Verifying new features.
 
-- Respect Debian packaging standards.
-- Maintain compatibility with the selected Debian Testing foundation.
-- Avoid unnecessary modifications to core Debian components.
-- Document additional dependencies.
-- Verify package installation and removal.
-- Test upgrade behaviour where applicable.
+### Branding and Design
 
-Changes to the Debian foundation must be reviewed before implementation.
+- Improving logos and icons.
+- Creating wallpapers.
+- Improving interface layouts.
+- Creating visual assets.
+- Improving boot presentation.
 
-## 5. Cloud Tool Contributions
+Design submissions must follow the project's branding and asset requirements.
 
-New cloud administration tools must have a clear purpose.
+## 3. Repository Setup
 
-Contributors should provide:
+Fork the official PALISADE repository to your GitHub account.
 
-- Tool name.
-- Official project website.
-- Intended functionality.
-- Installation method.
-- Dependencies.
-- Licence information.
-- Maintenance status.
-- Compatibility information.
-- Security considerations.
+Clone your fork:
 
-Tools should be evaluated before inclusion in the default installation.
+```bash
+git clone YOUR_FORK_URL
+```
 
-## 6. Security Requirements
+Enter the repository:
 
-Security is a mandatory consideration.
+```bash
+cd "Palisade Linux"
+```
 
-Contributors must never:
+Configure the original repository as the upstream remote:
 
-- Commit API keys or passwords.
-- Include private authentication credentials.
-- Introduce undocumented remote access.
-- Disable security protections without justification.
-- Introduce unverified third-party installation scripts.
-- Include software with known unresolved critical vulnerabilities without explicit review.
+```bash
+git remote add upstream OFFICIAL_REPOSITORY_URL
+```
 
-Security-related changes must include appropriate testing and documentation.
+Replace the example URLs with the actual repository addresses.
 
-## 7. Documentation
+## 4. Branching Standards
 
-New functionality must be documented.
+Create a separate branch for each contribution.
 
-Documentation should explain:
+Recommended naming conventions:
 
-- What the component does.
-- Why it is included.
-- How it works.
-- How to install or configure it.
-- Dependencies and requirements.
-- Known limitations.
-- Troubleshooting procedures.
+```text
+feature/description
+fix/description
+docs/description
+security/description
+test/description
+branding/description
+```
 
-Documentation should be understandable to administrators with different experience levels.
+Examples:
 
-## 8. Testing
+```text
+feature/cloud-admin-dashboard
+fix/boot-configuration
+docs/update-installation-guide
+test/hardware-compatibility
+```
 
-Contributors must test their changes before submitting them.
+Do not develop unrelated changes in the same branch.
 
-Depending on the contribution, testing may include:
+## 5. Commit Message Standards
 
-- Package installation.
-- Package removal.
-- Dependency validation.
-- ISO build validation.
+Commit messages should clearly explain the purpose of a change.
+
+Recommended format:
+
+```text
+type: short description
+```
+
+Examples:
+
+```text
+feat: add cloud administration utility
+fix: correct boot configuration
+docs: update installation instructions
+test: add package validation checks
+security: improve service permissions
+```
+
+Avoid vague messages such as:
+
+```text
+updates
+changes
+fixed stuff
+new files
+```
+
+## 6. Coding Standards
+
+Contributors must:
+
+- Follow the existing project architecture.
+- Write readable and maintainable code.
+- Use meaningful file and variable names.
+- Avoid unnecessary dependencies.
+- Validate user input.
+- Handle errors appropriately.
+- Avoid unnecessary root permissions.
+- Document important functionality.
+- Avoid introducing unrelated changes.
+
+Code must be suitable for long-term maintenance.
+
+## 7. Security Requirements
+
+Security is a core PALISADE development requirement.
+
+Contributors must:
+
+- Never commit passwords or credentials.
+- Never commit private keys or authentication tokens.
+- Avoid unsafe command execution.
+- Validate external input.
+- Use appropriate file permissions.
+- Avoid unnecessary administrative privileges.
+- Review dependencies before introducing them.
+- Follow the project's security reporting procedures.
+
+Changes affecting authentication, permissions, networking, boot, package management or system services require additional technical review.
+
+## 8. Testing Requirements
+
+Before submitting a contribution, perform the relevant tests.
+
+Depending on the change, this may include:
+
+- Installation testing.
 - Boot testing.
-- Desktop functionality.
-- Cloud CLI functionality.
-- Network connectivity.
-- Security configuration.
-- Upgrade compatibility.
+- Functional testing.
+- Package validation.
+- Security testing.
+- Hardware compatibility testing.
+- Regression testing.
 
-Do not describe untested functionality as verified.
+Document the tests performed and their results.
 
-## 9. Submitting Contributions
+Do not claim that a feature has been tested if it has not been tested.
 
-Before submitting a contribution:
+## 9. Documentation Requirements
 
-1. Review the existing repository structure.
-2. Check whether the functionality already exists.
-3. Create a separate development branch.
-4. Implement the changes in the appropriate directory.
-5. Test the implementation.
-6. Update relevant documentation.
-7. Review your changes for credentials and sensitive information.
-8. Submit a pull request for review.
+Documentation must be updated whenever a contribution changes:
 
-## 10. Pull Request Requirements
+- User functionality.
+- Installation procedures.
+- Configuration.
+- System administration.
+- Dependencies.
+- Security behaviour.
+- Development procedures.
 
-Pull requests should include:
+Documentation should be clear and understandable.
 
-- A clear title.
-- A description of the changes.
-- The reason for the contribution.
-- Affected components.
-- Testing performed.
-- Known limitations.
-- Relevant documentation updates.
+## 10. Pull Request Procedure
 
-Large architectural changes should be discussed before implementation.
+When your contribution is ready:
 
-## 11. Third-Party Software
+1. Push your branch to your fork.
+2. Open a pull request against the appropriate official repository branch.
+3. Explain the purpose of the change.
+4. Reference the related issue where applicable.
+5. Describe the implementation.
+6. List the tests performed.
+7. Identify known limitations.
+8. Include screenshots or logs where useful.
 
-Third-party projects must retain their original copyright notices and licensing information.
+Maintainers may request changes before approving the contribution.
 
-Contributors must not copy proprietary software or artwork without permission.
+## 11. Review and Approval
 
-Any third-party software included in PALISADE must be reviewed for compatibility and redistribution requirements.
+Submitting a pull request does not guarantee that it will be merged.
 
-## 12. Branding
+Maintainers will review contributions for:
 
-PALISADE has an independent visual identity.
-
-Contributions involving logos, artwork, wallpapers, themes or boot animations must follow the official PALISADE branding guidelines.
-
-Do not replace official branding without project approval.
-
-## 13. Code of Conduct
-
-Contributors are expected to communicate professionally and respectfully.
-
-Harassment, discrimination, deliberate disruption and malicious contributions are not acceptable.
-
-## 14. Final Review
-
-All contributions are subject to project review.
-
-Acceptance depends on:
-
-- Technical quality.
-- Debian compatibility.
+- Technical correctness.
 - Security.
-- Maintainability.
-- Project relevance.
-- Documentation quality.
+- Compatibility.
+- Project architecture.
+- Code quality.
+- Documentation.
+- Testing results.
+- Licensing requirements.
 
-Submitting a contribution does not guarantee acceptance.
+Only authorised maintainers may merge changes into protected branches.
 
----
+## 12. Licensing
 
-**PALISADE Linux**  
-Cloud Administration & Infrastructure
+By submitting a contribution, you confirm that:
 
-*Building a dedicated operating system for modern cloud infrastructure.*
+- You have the right to submit the material.
+- You have identified applicable third-party licences.
+- Your contribution does not knowingly violate another person's rights.
+- You agree to the project's contribution licensing terms.
+
+Original PALISADE project code is intended to use the MIT License unless a component has a separately documented licence.
+
+Third-party materials retain their own licensing requirements.
+
+## 13. Reporting Problems
+
+Use GitHub Issues for normal bugs, feature requests and documentation problems.
+
+Do not publish sensitive security vulnerabilities in public issues.
+
+Follow SECURITY.md for security reporting.
+
+## 14. Recognition
+
+PALISADE values community contributions.
+
+Meaningful contributions may be recognised in:
+
+- Release notes.
+- Contributor lists.
+- Project documentation.
+- Community announcements.
+
+## 15. Final Requirements
+
+Every contribution must support the purpose of PALISADE Linux.
+
+The project prioritises security, reliability, maintainability, clear documentation and responsible development.
+
+Thank you for helping build PALISADE Linux.

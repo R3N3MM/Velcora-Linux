@@ -1,31 +1,58 @@
-PALISADE Linux
-Copyright (C) 2026 PALISADE Linux Project
+MIT License
 
-This project is licensed under the GNU General Public License, version 3 or (at your option) any later version.
+Copyright (c) 2026 PALISADE Linux Project Contributors
 
-You may redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of the original PALISADE Linux project software and associated documentation
+files (the "Software"), to deal in the Software without restriction,
+including without limitation the rights to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of the Software, and
+to permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
 
-A copy of the GNU General Public License should accompany this project. If it does not, see:
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
-https://www.gnu.org/licenses/gpl-3.0.html
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
 
-## Important Licensing Notice
+---
 
-This licence applies only to software files and other materials explicitly identified as being distributed under the GNU General Public License.
+## Third-Party Software and Components
 
-The following materials are excluded unless explicitly licensed otherwise:
+PALISADE Linux is an operating system distribution that incorporates or may
+incorporate software, packages, libraries, drivers, utilities and other
+components developed by third parties.
 
-- PALISADE Linux name and trademarks.
-- PALISADE logos and emblems.
-- Castle-and-cloud artwork.
-- Official wallpapers and promotional artwork.
-- Boot animation artwork and graphical branding.
-- Other materials explicitly identified as proprietary or separately licensed.
+The MIT License above applies only to original PALISADE project materials
+whose licensing is controlled by the PALISADE project contributors.
 
-Third-party components, packages, tools, libraries and dependencies retain their respective copyright notices and licence conditions.
+Third-party components remain subject to their respective licences,
+copyright notices and distribution requirements.
 
-Nothing in this licence grants permission to use the PALISADE name, trademarks or branding in a way that suggests official endorsement, affiliation or authorisation.
+This licence does not relicense the Linux kernel, Debian packages,
+third-party applications, external dependencies or other independently
+licensed materials.
 
-For the complete GPL-3.0-or-later licence text, consult:
+## PALISADE Branding and Artwork
 
-https://www.gnu.org/licenses/gpl-3.0.txt
+The PALISADE name, logos, icons, wallpapers, visual identity and other
+branding materials are not automatically covered by the software licence
+above.
+
+Their use, modification and redistribution must follow the applicable
+branding and artwork permissions published by the project.
+
+## Licence Information
+
+For the full MIT License text and further information, visit:
+
+https://opensource.org/license/mit
+
+For questions about licensing, contact the PALISADE project maintainers
+through the official project support channels.
