@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <title>mic-75</title>
+  <g fill="none" stroke="#E2E8F0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <clipPath id="mic-in"><rect x="25" y="9" width="14" height="26" rx="7"/></clipPath><rect x="25" y="15.50" width="14" height="19.50" fill="#E2E8F0" stroke="none" clip-path="url(#mic-in)"/><rect x="24" y="8" width="16" height="28" rx="8"/><path d="M16 28 A16 16 0 0 0 48 28"/><path d="M32 44 V54"/><path d="M23 54 H41"/>
+  </g>
+</svg>

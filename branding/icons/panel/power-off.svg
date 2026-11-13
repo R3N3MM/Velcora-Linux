@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <title>power-off</title>
+  <g fill="none" stroke="#E2E8F0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 9 V31"/><path d="M19 20 A21 21 0 1 0 45 20"/>
+  </g>
+</svg>

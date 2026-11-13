@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <title>ethernet-off</title>
+  <g fill="none" stroke="#E2E8F0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <g opacity="0.35"><path d="M13 16 H51 V43 H42 V50 H22 V43 H13 Z"/><path d="M23 16 V27"/><path d="M29.3 16 V27"/><path d="M35.7 16 V27"/><path d="M42 16 V27"/></g><path d="M12 10 L52 54"/>
+  </g>
+</svg>

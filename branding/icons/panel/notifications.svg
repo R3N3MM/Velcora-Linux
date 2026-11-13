@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <title>notifications</title>
+  <g fill="none" stroke="#E2E8F0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 43 C19 39 20 34 20 28 C20 19 25 14 32 14 C39 14 44 19 44 28 C44 34 45 39 49 43 Z"/><path d="M32 14 V9"/><path d="M26.5 49 Q32 55 37.5 49"/>
+  </g>
+</svg>

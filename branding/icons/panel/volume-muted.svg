@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <title>volume-muted</title>
+  <g fill="none" stroke="#E2E8F0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(3 0)"><path d="M6 25 H14 L25 15 V49 L14 39 H6 Z"/><path d="M35 26 L51 40"/><path d="M51 26 L35 40"/></g>
+  </g>
+</svg>

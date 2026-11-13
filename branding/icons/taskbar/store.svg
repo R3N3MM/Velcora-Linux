@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <title>store</title>
+  <defs>
+    <linearGradient id="s" gradientUnits="userSpaceOnUse" x1="0" y1="12" x2="0" y2="52">
+      <stop offset="0" stop-color="#F8FAFC"/><stop offset="1" stop-color="#94A3B8"/>
+    </linearGradient>
+    <linearGradient id="t" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1B2A44"/><stop offset="1" stop-color="#0B1220"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#t)" stroke="#3B4A63" stroke-width="1.5"/>
+  <g fill="none" stroke="url(#s)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M17 25 H47 L45 49 H19 Z"/><path d="M25 25 V21 A7 7 0 0 1 39 21 V25"/>
+  </g>
+</svg>
