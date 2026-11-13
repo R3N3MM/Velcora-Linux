@@ -4,7 +4,8 @@
 `python3 scripts/build/generate-icons.py` (needs python3-cairosvg).
 
 - `taskbar/`: terminal, browser, application, workspaces, launcher,
-  text-editor, store, settings. Dark rounded tile, chrome-silver glyph.
+  text-editor, store, settings, folder. Dark rounded tile, chrome-silver
+  glyph.
 - `panel/`: accessibility, workspace, volume, bluetooth, wifi, battery,
   notifications, power. Symbolic silver glyph on a transparent background.
 
