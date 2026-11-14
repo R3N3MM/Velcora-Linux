@@ -13,7 +13,9 @@ build runner exist; the first ISO has not been built or boot-tested yet.
   with `--privileged`, so the host needs no build dependencies.
 - **Packages:** split into desktop, system and cloud lists under
   `live-build/config/package-lists/`. Only packages available in Debian 13
-  are listed; third-party repositories come later.
+  are listed; third-party repositories come later. Kubernetes Helm is not
+  packaged in Debian (the `helm` package is Emacs Helm), so it will be
+  added from the upstream repository in the cloud-tooling phase.
 
 ## Layout
 
