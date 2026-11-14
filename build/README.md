@@ -1,8 +1,9 @@
 # VELCORA build system
 
-Status: **phase 2 — first ISO built and boot-tested.** BIOS and UEFI boot
-both reach the Xfce desktop; boot-menu timeout and branding are the next
-items.
+Status: **phase 2 — ISO built, boot-tested and usable in virtual
+machines.** BIOS and UEFI boot reach the Xfce desktop and VirtualBox Guest
+Additions can be installed from the host's own disc. Branding is the next
+item.
 
 ## Decisions
 
@@ -118,6 +119,12 @@ and loads them. The image already contains `build-essential`, `dkms`,
 `perl`, `bzip2` and `linux-headers-amd64`; the disc comes from the
 VirtualBox installation on the host, which keeps Guest Additions matched to
 the VirtualBox version in use.
+
+Guest Additions 7.2.22 does not compile its optional `vboxvideo` driver
+against the Debian 13 kernel, so the installer prints a build failure for
+that module. Clipboard sharing, shared folders and VMSVGA display resizing
+come from `vboxguest` and `vboxsf`, which build and load normally; the
+helper reports this and the failure is harmless.
 
 The live session runs from RAM. Guest Additions and any other changes are
 lost at reboot until the installer phase adds persistent installation.

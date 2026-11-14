@@ -3,8 +3,9 @@
 ##
 ## VirtualBox attaches the Guest Additions disc with
 ##   Devices -> Insert Guest Additions CD image
-## then this script mounts it and builds the kernel modules. The build needs
-## linux-headers-amd64, dkms and build-essential, which the image ships.
+## then this script finds it, builds the kernel modules and loads them.
+## The build needs linux-headers-amd64, dkms and build-essential, which the
+## image already ships.
 
 set -eu
 
@@ -13,41 +14,67 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 mount_point=/media/cdrom
-found=
+source_dir=
+mounted=
 
-for device in /dev/sr0 /dev/sr1 /dev/sr2 /dev/cdrom; do
-	[ -b "$device" ] || continue
-	mkdir -p "$mount_point"
-	if mount -o ro "$device" "$mount_point" 2>/dev/null; then
-		if [ -f "$mount_point/VBoxLinuxAdditions.run" ]; then
-			found=$device
-			break
-		fi
-		umount "$mount_point" || true
+# Prefer a disc that is already mounted (the desktop auto-mounts it).
+for candidate in /media/*/*/VBoxLinuxAdditions.run /media/*/VBoxLinuxAdditions.run \
+	/run/media/*/*/VBoxLinuxAdditions.run; do
+	if [ -f "$candidate" ]; then
+		source_dir=${candidate%/VBoxLinuxAdditions.run}
+		break
 	fi
 done
 
-if [ -z "$found" ]; then
+if [ -z "$source_dir" ]; then
+	for device in /dev/sr0 /dev/sr1 /dev/sr2; do
+		[ -b "$device" ] || continue
+		mkdir -p "$mount_point"
+		if mount -o ro "$device" "$mount_point" 2>/dev/null; then
+			if [ -f "$mount_point/VBoxLinuxAdditions.run" ]; then
+				source_dir=$mount_point
+				mounted=1
+				break
+			fi
+			umount "$mount_point" || true
+		fi
+	done
+fi
+
+if [ -z "$source_dir" ]; then
 	echo "No VirtualBox Guest Additions disc was found." >&2
 	echo "In VirtualBox choose Devices -> Insert Guest Additions CD image, then run this command again." >&2
 	exit 1
 fi
 
-echo "Using Guest Additions disc on $found"
+echo "Using Guest Additions disc in $source_dir"
 echo "Building kernel modules; this takes a few minutes on first run."
 
 status=0
-sh "$mount_point/VBoxLinuxAdditions.run" || status=$?
-umount "$mount_point" || true
-
-if modinfo vboxguest >/dev/null 2>&1; then
-	modprobe vboxguest || true
-	modprobe vboxsf 2>/dev/null || true
-	echo "Guest Additions installed. Log out and back in, or restart the display manager,"
-	echo "to pick up clipboard sharing, shared folders and automatic resizing."
-	exit 0
+sh "$source_dir/VBoxLinuxAdditions.run" || status=$?
+if [ -n "$mounted" ]; then
+	umount "$mount_point" || true
 fi
 
-echo "Guest Additions did not install (installer exit status $status)." >&2
-echo "Check the output above for the reason." >&2
-exit 1
+kernel="$(uname -r)"
+
+if ! modinfo -k "$kernel" vboxguest >/dev/null 2>&1; then
+	echo "Guest Additions did not build for kernel $kernel (installer exit status $status)." >&2
+	echo "Check the output above and /var/log/vboxadd-install.log." >&2
+	exit 1
+fi
+
+if modprobe vboxguest 2>/dev/null; then
+	echo "Guest Additions installed and loaded for kernel $kernel."
+else
+	echo "Guest Additions installed for kernel $kernel."
+	echo "The kernel modules load automatically when this image runs under VirtualBox."
+fi
+modprobe vboxsf 2>/dev/null || true
+
+if ! modinfo -k "$kernel" vboxvideo >/dev/null 2>&1; then
+	echo "Note: the optional vboxvideo driver did not build for this kernel."
+	echo "VirtualBox still resizes the display through its VMSVGA adapter."
+fi
+
+echo "Log out and back in to start clipboard sharing, shared folders and resizing."
