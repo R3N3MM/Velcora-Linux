@@ -25,6 +25,7 @@ build/
   live-build/
     auto/config                  lb config options
     config/package-lists/        package selections (*.list.chroot)
+    config/bootloaders/          boot-menu timeout overrides
   work/                          scratch copy used by the builder (ignored)
   output/                        ISO, checksum and build log (ignored)
 scripts/build/

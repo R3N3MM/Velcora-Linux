@@ -45,6 +45,21 @@ done < <(find "$REPO_ROOT/scripts" -type f -name '*.sh')
 
 if sh -n "$LIVE_DIR/auto/config"; then ok; else fail "syntax error in auto/config"; fi
 
+bootloader_isolinux="$LIVE_DIR/config/bootloaders/isolinux/isolinux.cfg"
+bootloader_grub="$LIVE_DIR/config/bootloaders/grub-pc/config.cfg"
+require_file "$bootloader_isolinux"
+require_file "$bootloader_grub"
+if grep -qx 'timeout 300' "$bootloader_isolinux"; then
+	ok
+else
+	fail "isolinux.cfg must boot the default entry after 30 seconds (timeout 300)"
+fi
+if grep -qx 'set timeout=30' "$bootloader_grub"; then
+	ok
+else
+	fail "grub config.cfg must boot the default entry after 30 seconds (set timeout=30)"
+fi
+
 if command -v shellcheck >/dev/null 2>&1; then
 	if shellcheck -S warning "$REPO_ROOT"/scripts/build/*.sh "$LIVE_DIR/auto/config"; then
 		ok
