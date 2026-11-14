@@ -1,0 +1,38 @@
+#!/bin/sh
+## VELCORA live-build configuration.
+## Executed by `lb config`; `noauto` prevents it from recursing.
+
+set -e
+
+CONFIG_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+REPO_DIR="$(CDPATH= cd -- "${CONFIG_DIR}/../../.." && pwd)"
+VELCORA_VERSION="${VELCORA_VERSION:-$(cat "${REPO_DIR}/VERSION" 2>/dev/null || echo 0.1.0-dev)}"
+
+lb config noauto \
+	--mode debian \
+	--distribution trixie \
+	--architectures amd64 \
+	--binary-images iso-hybrid \
+	--archive-areas "main contrib non-free non-free-firmware" \
+	--mirror-bootstrap "http://deb.debian.org/debian/" \
+	--mirror-chroot "http://deb.debian.org/debian/" \
+	--mirror-chroot-security "http://security.debian.org/debian-security/" \
+	--mirror-binary "http://deb.debian.org/debian/" \
+	--mirror-binary-security "http://security.debian.org/debian-security/" \
+	--bootloaders "syslinux,grub-efi" \
+	--bootappend-live "boot=live components hostname=velcora username=velcora user-fullname=VELCORA user-default-groups=audio,cdrom,dip,floppy,video,plugdev,netdev,powerdev,scanner,sudo quiet splash" \
+	--bootappend-live-failsafe "boot=live components hostname=velcora username=velcora user-fullname=VELCORA user-default-groups=audio,cdrom,dip,floppy,video,plugdev,netdev,powerdev,scanner,sudo noapic noapm nodma nomce nolapic nomodeset nosmp nosplash vga=normal" \
+	--apt-recommends true \
+	--apt-indices false \
+	--apt-source-archives false \
+	--debian-installer none \
+	--memtest none \
+	--win32-loader false \
+	--firmware-chroot true \
+	--chroot-squashfs-compression-type xz \
+	--checksums sha256 \
+	--iso-application "VELCORA Linux ${VELCORA_VERSION}" \
+	--iso-preparer "VELCORA Linux Project" \
+	--iso-publisher "VELCORA Linux Project" \
+	--image-name "velcora" \
+	"$@"

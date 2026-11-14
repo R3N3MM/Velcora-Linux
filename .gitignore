@@ -1,5 +1,21 @@
 # Build output
 /build/output/
+
+# Build workspace
+/build/work/
+
+# In-tree live-build artefacts
+/build/live-build/chroot/
+/build/live-build/binary/
+/build/live-build/.build/
+/build/live-build/cache/
+/build/live-build/*.iso
+/build/live-build/*.contents
+/build/live-build/*.files
+/build/live-build/*.packages
+/build/live-build/*.size
+/build/live-build/*.manifest
+
 /build/iso/
 
 # Temporary files

@@ -1,0 +1,13 @@
+ansible
+awscli
+azure-cli
+kubernetes-client
+helm
+python3
+python3-pip
+python3-venv
+python3-requests
+python3-yaml
+git
+openssh-client
+yq
