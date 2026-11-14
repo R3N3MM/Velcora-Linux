@@ -1,7 +1,8 @@
 # VELCORA build system
 
-Status: **phase 1 — build foundation.** The live-build configuration and
-build runner exist; the first ISO has not been built or boot-tested yet.
+Status: **phase 2 — first ISO built and boot-tested.** BIOS and UEFI boot
+both reach the Xfce desktop; boot-menu timeout and branding are the next
+items.
 
 ## Decisions
 
@@ -84,6 +85,31 @@ Minimum smoke test for the first image:
    `kubectl version --client` succeed.
 4. NetworkManager connects over Ethernet and Wi-Fi.
 5. Shutdown and reboot work cleanly.
+
+## Verified build
+
+| Field | Value |
+| --- | --- |
+| Date | 2026-11-14 |
+| Version | 0.1.0-dev |
+| Source commit | `62fda30` |
+| Size | 2,208,104,448 bytes (2.1 GiB) |
+| SHA-256 | `fd10fee8568ab2798478daf26084faf7f24246fb508b10eb27f5ee5f00655c0e` |
+| Boot | BIOS and UEFI (QEMU/KVM, OVMF) |
+
+Verified in the live session:
+
+- LightDM autologin as `velcora`, Xfce panel and terminal working.
+- `sudo` accepts the `live` password; `velcora` is in the `sudo` group.
+- `ansible 2.19.11`, `aws-cli 2.23.6`, `azure-cli 2.74.0`,
+  `kubectl 1.32.3` all start and report their versions.
+- HTTPS egress works (`curl -sI https://deb.debian.org` returns
+  HTTP/2 200). ICMP echo is not forwarded by QEMU user networking, so
+  the ping check in the smoke test is expected to fail in that VM only.
+- Clean shutdown from the Xfce session.
+
+Azure CLI prints Python 3.13 `SyntaxWarning`/`FutureWarning` noise and a
+harmless `rdbms` module warning on first run; the command still works.
 
 ## Phases
 
