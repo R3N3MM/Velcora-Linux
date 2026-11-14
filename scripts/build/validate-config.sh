@@ -25,12 +25,16 @@ for file in \
 	"$PACKAGE_DIR/velcora-desktop.list.chroot" \
 	"$PACKAGE_DIR/velcora-system.list.chroot" \
 	"$PACKAGE_DIR/velcora-cloud.list.chroot" \
+	"$PACKAGE_DIR/velcora-vm.list.chroot" \
+	"$LIVE_DIR/config/includes.chroot/usr/local/bin/velcora-install-guest-additions" \
 	"$REPO_ROOT/scripts/build/build-iso.sh"; do
 	require_file "$file"
 done
 
 [[ -x "$LIVE_DIR/auto/config" ]] || fail "auto/config is not executable"
 [[ -x "$REPO_ROOT/scripts/build/build-iso.sh" ]] || fail "build-iso.sh is not executable"
+[[ -x "$LIVE_DIR/config/includes.chroot/usr/local/bin/velcora-install-guest-additions" ]] \
+	|| fail "velcora-install-guest-additions is not executable"
 
 version="$(tr -d '[:space:]' < "$REPO_ROOT/VERSION")"
 if [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.]+)?$ ]]; then
@@ -44,6 +48,14 @@ while IFS= read -r script; do
 done < <(find "$REPO_ROOT/scripts" -type f -name '*.sh')
 
 if sh -n "$LIVE_DIR/auto/config"; then ok; else fail "syntax error in auto/config"; fi
+
+guest_additions_helper="$LIVE_DIR/config/includes.chroot/usr/local/bin/velcora-install-guest-additions"
+if sh -n "$guest_additions_helper"; then ok; else fail "syntax error in velcora-install-guest-additions"; fi
+if grep -q 'VBoxLinuxAdditions.run' "$guest_additions_helper"; then
+	ok
+else
+	fail "velcora-install-guest-additions must run VBoxLinuxAdditions.run"
+fi
 
 bootloader_isolinux="$LIVE_DIR/config/bootloaders/isolinux/isolinux.cfg"
 bootloader_grub="$LIVE_DIR/config/bootloaders/grub-pc/config.cfg"
@@ -72,7 +84,7 @@ declare -A seen=()
 for list in "$PACKAGE_DIR"/*.list.chroot; do
 	[[ -e "$list" ]] || continue
 	while IFS= read -r package || [[ -n "$package" ]]; do
-		[[ -z "$package" ]] && continue
+		[[ -z "$package" || "$package" == \#* ]] && continue
 		if [[ ! "$package" =~ ^[a-z0-9][a-z0-9+.-]*$ ]]; then
 			fail "${list##*/}: invalid package name '$package'"
 		elif [[ -n "${seen[$package]:-}" ]]; then

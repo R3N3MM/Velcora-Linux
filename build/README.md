@@ -12,11 +12,16 @@ items.
 - **Root filesystem:** single xz-compressed squashfs.
 - **Build isolation:** the ISO is built inside `debian:trixie` in Docker
   with `--privileged`, so the host needs no build dependencies.
-- **Packages:** split into desktop, system and cloud lists under
+- **Packages:** split into desktop, system, cloud and VM lists under
   `live-build/config/package-lists/`. Only packages available in Debian 13
   are listed; third-party repositories come later. Kubernetes Helm is not
   packaged in Debian (the `helm` package is Emacs Helm), so it will be
   added from the upstream repository in the cloud-tooling phase.
+- **VirtualBox:** Debian 13 no longer ships `virtualbox-guest-utils`,
+  `virtualbox-guest-x11` or `virtualbox-guest-dkms` in stable, so the image
+  ships the build prerequisites instead and installs Guest Additions from
+  the host's own "Insert Guest Additions CD image" disc. See
+  *Running in VirtualBox* below.
 
 ## Layout
 
@@ -26,6 +31,7 @@ build/
     auto/config                  lb config options
     config/package-lists/        package selections (*.list.chroot)
     config/bootloaders/          boot-menu timeout overrides
+    config/includes.chroot/      files copied into the image
   work/                          scratch copy used by the builder (ignored)
   output/                        ISO, checksum and build log (ignored)
 scripts/build/
@@ -86,6 +92,35 @@ Minimum smoke test for the first image:
    `kubectl version --client` succeed.
 4. NetworkManager connects over Ethernet and Wi-Fi.
 5. Shutdown and reboot work cleanly.
+
+## Running in Oracle VirtualBox
+
+Create a VM with type **Debian (64-bit)**, at least 4 GB RAM and 2 CPUs,
+VMSVGA graphics and EFI enabled (the default in VirtualBox 7), then attach
+`build/output/velcora-<version>-amd64.iso` to the optical drive and start
+it. BIOS and EFI boot both work.
+
+Guest Additions add clipboard sharing, shared folders and automatic
+resizing. After the desktop appears:
+
+1. In the VM window choose **Devices → Insert Guest Additions CD image**.
+2. Open a terminal and run:
+
+   ```sh
+   sudo velcora-install-guest-additions
+   ```
+
+3. Log out and back in, or run `sudo systemctl restart lightdm`, so the new
+   input and video drivers load.
+
+The command mounts the disc, builds the modules against the running kernel
+and loads them. The image already contains `build-essential`, `dkms`,
+`perl`, `bzip2` and `linux-headers-amd64`; the disc comes from the
+VirtualBox installation on the host, which keeps Guest Additions matched to
+the VirtualBox version in use.
+
+The live session runs from RAM. Guest Additions and any other changes are
+lost at reboot until the installer phase adds persistent installation.
 
 ## Verified build
 

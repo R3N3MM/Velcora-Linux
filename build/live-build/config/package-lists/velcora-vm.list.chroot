@@ -1,0 +1,17 @@
+# Virtual machine integration.
+#
+# VirtualBox: Debian 13 (trixie) no longer ships virtualbox-guest-utils,
+# virtualbox-guest-x11 or virtualbox-guest-dkms in stable, so Guest Additions
+# cannot be preinstalled from the Debian archive. Instead the image ships the
+# toolchain they need, so they can be built from the host's own
+# "Insert Guest Additions CD image" disc, which keeps the version matched to
+# the VirtualBox installation in use. See velcora-install-guest-additions.
+build-essential
+dkms
+linux-headers-amd64
+perl
+bzip2
+
+# QEMU/KVM and SPICE integration.
+qemu-guest-agent
+spice-vdagent

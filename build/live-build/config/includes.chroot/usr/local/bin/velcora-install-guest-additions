@@ -1,0 +1,53 @@
+#!/bin/sh
+## Install VirtualBox Guest Additions in the running VELCORA live session.
+##
+## VirtualBox attaches the Guest Additions disc with
+##   Devices -> Insert Guest Additions CD image
+## then this script mounts it and builds the kernel modules. The build needs
+## linux-headers-amd64, dkms and build-essential, which the image ships.
+
+set -eu
+
+if [ "$(id -u)" -ne 0 ]; then
+	exec sudo -- "$0" "$@"
+fi
+
+mount_point=/media/cdrom
+found=
+
+for device in /dev/sr0 /dev/sr1 /dev/sr2 /dev/cdrom; do
+	[ -b "$device" ] || continue
+	mkdir -p "$mount_point"
+	if mount -o ro "$device" "$mount_point" 2>/dev/null; then
+		if [ -f "$mount_point/VBoxLinuxAdditions.run" ]; then
+			found=$device
+			break
+		fi
+		umount "$mount_point" || true
+	fi
+done
+
+if [ -z "$found" ]; then
+	echo "No VirtualBox Guest Additions disc was found." >&2
+	echo "In VirtualBox choose Devices -> Insert Guest Additions CD image, then run this command again." >&2
+	exit 1
+fi
+
+echo "Using Guest Additions disc on $found"
+echo "Building kernel modules; this takes a few minutes on first run."
+
+status=0
+sh "$mount_point/VBoxLinuxAdditions.run" || status=$?
+umount "$mount_point" || true
+
+if modinfo vboxguest >/dev/null 2>&1; then
+	modprobe vboxguest || true
+	modprobe vboxsf 2>/dev/null || true
+	echo "Guest Additions installed. Log out and back in, or restart the display manager,"
+	echo "to pick up clipboard sharing, shared folders and automatic resizing."
+	exit 0
+fi
+
+echo "Guest Additions did not install (installer exit status $status)." >&2
+echo "Check the output above for the reason." >&2
+exit 1

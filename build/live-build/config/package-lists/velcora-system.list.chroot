@@ -21,8 +21,6 @@ jq
 zstd
 gparted
 ufw
-qemu-guest-agent
-spice-vdagent
 plymouth
 plymouth-themes
 fonts-dejavu
