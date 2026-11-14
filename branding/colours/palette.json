@@ -1,0 +1,62 @@
+{
+  "name": "VELCORA",
+  "version": "1.0.0",
+  "colours": [
+    {
+      "token": "midnight",
+      "name": "Midnight",
+      "hex": "#0B0F17",
+      "rgb": [11, 15, 23],
+      "role": "Base background"
+    },
+    {
+      "token": "navy",
+      "name": "Navy",
+      "hex": "#0A1A33",
+      "rgb": [10, 26, 51],
+      "role": "Elevated surfaces, deep panels"
+    },
+    {
+      "token": "slate",
+      "name": "Slate",
+      "hex": "#303B4D",
+      "rgb": [48, 59, 77],
+      "role": "Borders, dividers, inactive controls"
+    },
+    {
+      "token": "muted",
+      "name": "Muted",
+      "hex": "#8B949E",
+      "rgb": [139, 148, 158],
+      "role": "Muted and secondary text"
+    },
+    {
+      "token": "silver",
+      "name": "Silver",
+      "hex": "#C9D1DB",
+      "rgb": [201, 209, 219],
+      "role": "Secondary text, icons"
+    },
+    {
+      "token": "snow",
+      "name": "Snow",
+      "hex": "#F0F6FC",
+      "rgb": [240, 246, 252],
+      "role": "Primary text"
+    },
+    {
+      "token": "blue",
+      "name": "Blue",
+      "hex": "#1F6FEB",
+      "rgb": [31, 111, 235],
+      "role": "Primary accent, focus, selection"
+    },
+    {
+      "token": "azure",
+      "name": "Azure",
+      "hex": "#58A6FF",
+      "rgb": [88, 166, 255],
+      "role": "Accent hover, highlights, links"
+    }
+  ]
+}

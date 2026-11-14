@@ -1,0 +1,22 @@
+/* VELCORA palette — keep in sync with palette.json */
+:root {
+  --velcora-midnight: #0b0f17;
+  --velcora-navy: #0a1a33;
+  --velcora-slate: #303b4d;
+  --velcora-muted: #8b949e;
+  --velcora-silver: #c9d1db;
+  --velcora-snow: #f0f6fc;
+  --velcora-blue: #1f6feb;
+  --velcora-azure: #58a6ff;
+
+  /* Semantic aliases */
+  --velcora-bg: var(--velcora-midnight);
+  --velcora-surface: var(--velcora-navy);
+  --velcora-border: var(--velcora-slate);
+  --velcora-text: var(--velcora-snow);
+  --velcora-text-secondary: var(--velcora-silver);
+  --velcora-text-muted: var(--velcora-muted);
+  --velcora-accent: var(--velcora-blue);
+  --velcora-accent-hover: var(--velcora-azure);
+  --velcora-on-accent: var(--velcora-midnight);
+}
