@@ -1,0 +1,6 @@
+# Passwordless sudo for the live session only.
+#
+# The Calamares shellprocess job removes this file from the installed
+# system before the installer finishes. Installed users keep normal
+# password-protected sudo through the "sudo" group.
+velcora ALL=(ALL) NOPASSWD: ALL

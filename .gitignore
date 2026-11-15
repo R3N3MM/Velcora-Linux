@@ -4,6 +4,9 @@
 # Build workspace
 /build/work/
 
+# Branding rendered from branding/ at build time
+/build/generated/
+
 # In-tree live-build artefacts
 /build/live-build/chroot/
 /build/live-build/binary/

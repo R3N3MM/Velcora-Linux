@@ -1,45 +1,76 @@
 # VELCORA build system
 
-Status: **phase 2 — ISO built, boot-tested and usable in virtual
-machines.** BIOS and UEFI boot reach the Xfce desktop and VirtualBox Guest
-Additions can be installed from the host's own disc. Branding is the next
-item.
+Status: **phase 3 — branded ISO with a Calamares installer.** BIOS and UEFI
+boot reach the branded Xfce desktop, VirtualBox guest tools are preinstalled,
+and **Install Velcora** launches Calamares from the live desktop. An
+end-to-end disk installation still needs a test pass.
 
 ## Decisions
 
 - **Base:** Debian 13 (trixie), amd64 only.
-- **Image:** live-build `iso-hybrid` (BIOS and UEFI), no installer yet.
+- **Image:** live-build `iso-hybrid` (BIOS and UEFI) with Calamares.
 - **Desktop:** Xfce via `task-xfce-desktop`, LightDM with autologin.
+- **Branding:** Velcora ISO metadata and boot menus, `os-release`, a default
+  wallpaper for new users, and Calamares branding derived from
+  `calamares-settings-debian`.
 - **Root filesystem:** single xz-compressed squashfs.
 - **Build isolation:** the ISO is built inside `debian:trixie` in Docker
   with `--privileged`, so the host needs no build dependencies.
-- **Packages:** split into desktop, system, cloud and VM lists under
-  `live-build/config/package-lists/`. Only packages available in Debian 13
-  are listed; third-party repositories come later. Kubernetes Helm is not
-  packaged in Debian (the `helm` package is Emacs Helm), so it will be
-  added from the upstream repository in the cloud-tooling phase.
-- **VirtualBox:** Debian 13 no longer ships `virtualbox-guest-utils`,
-  `virtualbox-guest-x11` or `virtualbox-guest-dkms` in stable, so the image
-  ships the build prerequisites instead and installs Guest Additions from
-  the host's own "Insert Guest Additions CD image" disc. See
+- **Packages:** split into desktop, system, cloud, VM and installer lists
+  under `live-build/config/package-lists/`. Kubernetes Helm is not packaged
+  in Debian (the `helm` package is Emacs Helm), so it will be added from the
+  upstream repository in the cloud-tooling phase.
+- **VirtualBox:** Debian 13 no longer ships `virtualbox-guest-utils` or
+  `virtualbox-guest-x11` in stable. The two userspace packages are pinned
+  from unstable/contrib at build time (`config/archives/velcora-contrib.*`);
+  the source and pin are removed before the image is created. They use the
+  kernel's in-tree `vboxguest`/`vboxsf`/`vboxvideo` modules. The host's
+  Guest Additions disc remains available as an update path. See
   *Running in VirtualBox* below.
 
 ## Layout
 
+The top-level areas are the source of truth.  `build/` only assembles them
+into a live-build tree, which keeps the boot, desktop and Debian
+configuration reviewable in the place the repository structure says they
+belong.
+
 ```text
+boot/
+  bootloaders/                   isolinux and GRUB menus/theme
+  plymouth/velcora/              Plymouth theme description and script
+  hooks/                         Plymouth selection/initramfs hook
+debian/
+  base/                          os-release, issue, issue.net
+  installer/                     Calamares settings, branding and launchers
+  vm/                            VirtualBox Guest Additions helper
+  apt/, archives/                apt retry settings and build-only pins
+  package-lists/                 package selections (*.list.chroot)
+  hooks/                         chroot cleanup for installer branding
+  sudoers/                       live-only passwordless sudo
+desktop/
+  xfce/                          Xfce desktop and per-user defaults
+  lightdm/                       LightDM greeter branding
+  gtk-3.0/, fonts/               GTK settings and Inter font preference
+  autostart/                     live-only installer launcher
+branding/
+  logo/, wallpapers/, icons/     source artwork rendered into the image
 build/
-  live-build/
-    auto/config                  lb config options
-    config/package-lists/        package selections (*.list.chroot)
-    config/apt/                  apt retry settings for large downloads
-    config/bootloaders/          boot-menu timeout overrides
-    config/includes.chroot/      files copied into the image
+  live-build/auto/config         lb config options and ISO metadata
+  generated/                     rendered artwork (ignored)
   work/                          scratch copy used by the builder (ignored)
   output/                        ISO, checksum and build log (ignored)
 scripts/build/
-  build-iso.sh                   containerised lb config + lb build
+  build-iso.sh                   render, stage, then run lb config + lb build
+  stage-live-config.sh           compose live-build config from the sources
+  render-boot-branding.py        splash, Plymouth frames, logo images
+  sync-branding-assets.py        wallpapers and the Velcora icon theme
   validate-config.sh             static checks, used by CI and make
 ```
+
+`make iso` renders `branding/` into `build/generated/`, stages the source
+areas into `build/work/live-build/config/`, and then runs live-build.  The
+rendered files are build artefacts, so they are not committed.
 
 ## Building
 
@@ -88,6 +119,11 @@ as a pre-release. Parts and notes are staged in `build/output/release/`.
 
 - User: `velcora`, password: `live`, groups include `sudo`.
 - Hostname: `velcora`; LightDM logs the user in automatically.
+- The live user has passwordless sudo. Calamares removes
+  `/etc/sudoers.d/90-velcora-live` from the installed system; installed
+  users get normal password-protected sudo through the `sudo` group.
+- **Install Velcora** is added to the live desktop at login. The icon is
+  deliberately live-only, so installed systems do not inherit it.
 - Root login and the root password are not enabled.
 
 These defaults are for development images only and will change before a
@@ -122,7 +158,13 @@ VMSVGA graphics and EFI enabled (the default in VirtualBox 7), then attach
 it. BIOS and EFI boot both work.
 
 Guest Additions add clipboard sharing, shared folders and automatic
-resizing. After the desktop appears:
+resizing. The image preinstalls the `virtualbox-guest-utils` and
+`virtualbox-guest-x11` userspace packages; Debian's kernel already provides
+the matching `vboxguest`, `vboxsf` and `vboxvideo` modules, so these work in
+the live session without any manual step.
+
+If the host's VirtualBox is newer than the guest tools in the image, update
+them from the host's own disc:
 
 1. In the VM window choose **Devices → Insert Guest Additions CD image**.
 2. Open a terminal and run:
@@ -134,21 +176,21 @@ resizing. After the desktop appears:
 3. Log out and back in, or run `sudo systemctl restart lightdm`, so the new
    input and video drivers load.
 
-The command mounts the disc, builds the modules against the running kernel
-and loads them. The image already contains `build-essential`, `dkms`,
-`perl`, `bzip2` and `linux-headers-amd64`; the disc comes from the
-VirtualBox installation on the host, which keeps Guest Additions matched to
-the VirtualBox version in use.
+The command mounts the disc, builds any modules it needs against the running
+kernel and loads them. The image contains `build-essential`, `dkms`,
+`perl`, `bzip2` and `linux-headers-amd64` for that purpose; the disc comes
+from the VirtualBox installation on the host, which keeps Guest Additions
+matched to the VirtualBox version in use.
 
 Guest Additions 7.2.22 does not compile its optional `vboxvideo` driver
-against the Debian 13 kernel, so the installer prints a build failure for
+against the Debian 13 kernel, so the installer may print a build failure for
 that module. Clipboard sharing, shared folders and VMSVGA display resizing
 come from `vboxguest` and `vboxsf`, which build and load normally, and the
 kernel's own `vboxvideo` driver remains available, so the failure is
 harmless.
 
-The live session runs from RAM. Guest Additions and any other changes are
-lost at reboot until the installer phase adds persistent installation.
+The live session runs from RAM, so changes are lost at reboot. Use
+**Install Velcora** to install onto disk when you need persistence.
 
 ## Verified build
 

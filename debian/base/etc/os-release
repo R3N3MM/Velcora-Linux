@@ -1,0 +1,10 @@
+PRETTY_NAME="Velcora Linux 0.1.0-dev"
+NAME="Velcora Linux"
+VERSION_ID="0.1.0-dev"
+VERSION="0.1.0-dev"
+VERSION_CODENAME=trixie
+ID=velcora
+ID_LIKE=debian
+HOME_URL="https://github.com/R3N3MM/Velcora-Linux"
+SUPPORT_URL="https://github.com/R3N3MM/Velcora-Linux/issues"
+BUG_REPORT_URL="https://github.com/R3N3MM/Velcora-Linux/issues"

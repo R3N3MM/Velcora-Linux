@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Velcora Installer Icon
+Exec=/usr/local/bin/velcora-install-desktop-icon
+NoDisplay=true
+StartupNotify=false
+X-GNOME-Autostart-Phase=Initialization
+X-KDE-autostart-phase=1

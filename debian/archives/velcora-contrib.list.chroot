@@ -1,0 +1,5 @@
+# Debian unstable/contrib is used during the chroot build only, to install
+# the VirtualBox guest userspace tools that Debian 13 (trixie) stable no
+# longer ships. live-build removes this source (and velcora-contrib.pref)
+# before the image is created, so the installed system stays on trixie.
+deb http://deb.debian.org/debian unstable contrib

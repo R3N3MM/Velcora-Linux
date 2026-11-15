@@ -1,0 +1,18 @@
+#!/bin/sh
+## Remove Debian's Calamares branding and launchers, keeping the Velcora
+## replacements staged from debian/installer. Runs inside the chroot after
+## includes have been copied.
+
+set -e
+
+rm -rf /etc/calamares/branding/debian
+rm -f /usr/share/applications/calamares-install-debian.desktop
+rm -f /etc/xdg/autostart/calamares-desktop-icon.desktop
+rm -f /usr/bin/calamares-install-debian /usr/bin/add-calamares-desktop-icon
+rm -f /usr/share/pixmaps/install-debian.png
+
+test -f /etc/calamares/branding/velcora/branding.desc
+grep -qx 'branding: velcora' /etc/calamares/settings.conf
+
+chmod 0440 /etc/sudoers.d/90-velcora-live
+visudo -cf /etc/sudoers.d/90-velcora-live >/dev/null

@@ -1,0 +1,16 @@
+# Keep unstable out of the image by default: only explicitly requested
+# packages may come from it.
+Package: *
+Pin: release a=unstable
+Pin-Priority: 1
+
+# VirtualBox guest userspace tools. These are architecture-specific
+# binaries, not kernel modules; vboxguest/vboxsf/vboxvideo are already
+# provided by the trixie kernel, so all dependencies resolve from stable.
+Package: virtualbox-guest-utils
+Pin: release a=unstable
+Pin-Priority: 990
+
+Package: virtualbox-guest-x11
+Pin: release a=unstable
+Pin-Priority: 990

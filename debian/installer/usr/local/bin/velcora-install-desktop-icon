@@ -1,0 +1,24 @@
+#!/bin/sh
+## Put the "Install Velcora" icon on the desktop, but only in the live
+## session. Installed systems never have /run/live, so nothing happens there.
+
+[ -d /run/live ] || exit 0
+command -v calamares >/dev/null 2>&1 || exit 0
+
+desktop="$(xdg-user-dir DESKTOP 2>/dev/null || true)"
+[ -n "${desktop:-}" ] || desktop="${HOME:-/home/velcora}/Desktop"
+mkdir -p "$desktop" || exit 0
+
+cp /usr/local/share/velcora/install-velcora.desktop \
+	"$desktop/install-velcora.desktop" || exit 0
+chmod +x "$desktop/install-velcora.desktop"
+
+if [ "${XDG_CURRENT_DESKTOP:-}" = "XFCE" ]; then
+	gio set --type=string "$desktop/install-velcora.desktop" \
+		metadata::trusted true 2>/dev/null || true
+	gio set --type=string "$desktop/install-velcora.desktop" \
+		metadata::xfce-exe-checksum \
+		"$(sha256sum "$desktop/install-velcora.desktop" | cut -f1 -d' ')" \
+		2>/dev/null || true
+	touch "$desktop/install-velcora.desktop"
+fi

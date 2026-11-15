@@ -1,0 +1,34 @@
+#!/bin/sh
+## Make the Velcora identity the system default inside the image.
+##
+## Runs in the live-build chroot after the package install and after the
+## staged image files have been copied in.  The Plymouth theme must be
+## selected before the initramfs is generated so the splash is part of the
+## boot image on both BIOS and UEFI.
+
+set -e
+
+theme=velcora
+theme_dir="/usr/share/plymouth/themes/$theme"
+
+test -f "$theme_dir/$theme.plymouth"
+test -f "$theme_dir/$theme.script"
+test -f "$theme_dir/background.png"
+
+# Select the theme and regenerate every installed initramfs.  A plain
+# `update-initramfs -u` would use the host kernel, which is not present in
+# the chroot; `-k all` uses the kernels installed in the image.
+plymouth-set-default-theme "$theme"
+grep -qx "Theme=$theme" /etc/plymouth/plymouthd.conf
+update-initramfs -u -k all
+
+# Refresh caches for the newly installed icons and fonts.
+if command -v gtk-update-icon-cache >/dev/null 2>&1; then
+	gtk-update-icon-cache -f -t /usr/share/icons/Velcora
+fi
+if command -v fc-cache >/dev/null 2>&1; then
+	fc-cache -f
+fi
+if command -v update-desktop-database >/dev/null 2>&1; then
+	update-desktop-database -q /usr/share/applications || true
+fi

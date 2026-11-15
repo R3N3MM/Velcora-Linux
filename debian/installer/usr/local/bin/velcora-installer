@@ -1,0 +1,9 @@
+#!/bin/sh
+## Launch the Calamares installer from the Velcora live session.
+## The live user has passwordless sudo; Calamares needs root.
+
+xhost +si:localuser:root >/dev/null 2>&1 || true
+sudo -E calamares
+status=$?
+xhost -si:localuser:root >/dev/null 2>&1 || true
+exit "$status"

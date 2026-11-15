@@ -31,8 +31,9 @@ lb config noauto \
 	--firmware-chroot true \
 	--chroot-squashfs-compression-type xz \
 	--checksums sha256 \
-	--iso-application "VELCORA Linux ${VELCORA_VERSION}" \
-	--iso-preparer "VELCORA Linux Project" \
-	--iso-publisher "VELCORA Linux Project" \
+	--iso-application "Velcora Linux" \
+	--iso-volume "VELCORA" \
+	--iso-preparer "Velcora Linux Project" \
+	--iso-publisher "Velcora Linux Project" \
 	--image-name "velcora" \
 	"$@"

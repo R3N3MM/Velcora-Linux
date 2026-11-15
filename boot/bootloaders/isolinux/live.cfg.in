@@ -1,0 +1,12 @@
+label live-amd64
+	menu label ^Start Velcora Linux
+	menu default
+	linux @LINUX@
+	initrd @INITRD@
+	append @APPEND_LIVE@
+
+label live-amd64-failsafe
+	menu label Start Velcora Linux (safe graphics)
+	linux @LINUX@
+	initrd @INITRD@
+	append @APPEND_LIVE_FAILSAFE@

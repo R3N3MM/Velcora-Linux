@@ -1,0 +1,21 @@
+# Calamares installer and the bootloader tooling it needs in the target.
+# calamares-settings-debian is the base configuration; its Debian branding
+# and launchers are replaced by debian/installer and a chroot hook.
+calamares
+calamares-settings-debian
+
+# grub-install / efibootmgr are used by Calamares to make the installed
+# system bootable on both BIOS and UEFI machines.
+grub-pc-bin
+grub-efi-amd64-bin
+grub-efi-amd64-signed
+shim-signed
+efibootmgr
+dosfstools
+mtools
+os-prober
+
+# Filesystem and live-medium helpers used by the install sequence.
+squashfs-tools
+cryptsetup
+pkexec

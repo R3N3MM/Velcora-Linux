@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Velcora
+Description=VELCORA animated boot splash
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/velcora
+ScriptFile=/usr/share/plymouth/themes/velcora/velcora.script

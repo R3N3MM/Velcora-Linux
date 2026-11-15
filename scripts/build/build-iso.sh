@@ -41,12 +41,14 @@ mkdir -p "$WORK_DIR" "$OUT_DIR"
 cp -a "$LIVE_DIR" "$WORK_DIR/live-build"
 cp "$REPO_ROOT/VERSION" "$WORK_DIR/VERSION"
 
-log "Running lb config and lb build (this takes 20–40 minutes on a first build)"
+log "Rendering branding and staging sources, then running lb config and lb build"
+log "(this takes 20–40 minutes on a first build)"
 "$DOCKER" run --rm --privileged \
 	--env VELCORA_VERSION="$VERSION" \
 	--env HOST_UID="$(id -u)" \
 	--env HOST_GID="$(id -g)" \
 	--volume "$WORK_DIR:/work" \
+	--volume "$REPO_ROOT:/source:ro" \
 	--workdir /work/live-build \
 	"$BUILDER_IMAGE" \
 	bash -euo pipefail -c '
@@ -55,11 +57,18 @@ log "Running lb config and lb build (this takes 20–40 minutes on a first build
 			> /etc/apt/apt.conf.d/90retries
 		apt-get update
 		apt-get install -y --no-install-recommends \
-			live-build ca-certificates \
+			live-build ca-certificates python3 librsvg2-bin \
 			dosfstools mtools squashfs-tools xorriso \
 			isolinux syslinux-common syslinux-efi \
 			grub-pc-bin grub-efi-amd64-bin >/dev/null
 		trap '"'"'chown -R "${HOST_UID}:${HOST_GID}" /work'"'"' EXIT
+		python3 /source/scripts/build/render-boot-branding.py \
+			--repo /source --output /work/generated
+		python3 /source/scripts/build/sync-branding-assets.py \
+			--repo /source --output /work/generated/includes.chroot
+		bash /source/scripts/build/stage-live-config.sh \
+			--source /source --target /work/live-build \
+			--generated /work/generated
 		lb config
 		lb build
 	' 2>&1 | tee "$OUT_DIR/build.log"
