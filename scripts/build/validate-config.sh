@@ -28,12 +28,14 @@ for file in \
 	"$PACKAGE_DIR/velcora-vm.list.chroot" \
 	"$LIVE_DIR/config/apt/apt.conf" \
 	"$LIVE_DIR/config/includes.chroot/usr/local/bin/velcora-install-guest-additions" \
-	"$REPO_ROOT/scripts/build/build-iso.sh"; do
+	"$REPO_ROOT/scripts/build/build-iso.sh" \
+	"$REPO_ROOT/scripts/release/publish-iso.sh"; do
 	require_file "$file"
 done
 
 [[ -x "$LIVE_DIR/auto/config" ]] || fail "auto/config is not executable"
 [[ -x "$REPO_ROOT/scripts/build/build-iso.sh" ]] || fail "build-iso.sh is not executable"
+[[ -x "$REPO_ROOT/scripts/release/publish-iso.sh" ]] || fail "publish-iso.sh is not executable"
 [[ -x "$LIVE_DIR/config/includes.chroot/usr/local/bin/velcora-install-guest-additions" ]] \
 	|| fail "velcora-install-guest-additions is not executable"
 

@@ -69,6 +69,21 @@ If `make iso` fails, the container log is on screen and in
 `build/output/build.log`; the live-build tree is preserved in
 `build/work/live-build`.
 
+## Publishing a release
+
+GitHub caps each release asset at 2 GiB, and the ISO is slightly larger, so
+the release script splits it into two parts, writes checksums and publishes
+them with join instructions:
+
+```sh
+make publish              # publish the ISO in build/output/
+scripts/release/publish-iso.sh --dry-run   # stage and print, upload nothing
+```
+
+`REPO`, `TAG` and `PART_SIZE` can be overridden in the environment. The tag
+defaults to `v<version>` (for example `v0.1.0-dev`) and the release is marked
+as a pre-release. Parts and notes are staged in `build/output/release/`.
+
 ## Live session defaults
 
 - User: `velcora`, password: `live`, groups include `sudo`.

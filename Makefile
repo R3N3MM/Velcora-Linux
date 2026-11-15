@@ -5,7 +5,7 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
-.PHONY: help validate iso clean distclean
+.PHONY: help validate iso publish clean distclean
 
 help: ## Show available targets
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-12s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -15,6 +15,9 @@ validate: ## Check scripts and live-build configuration
 
 iso: validate ## Build the VELCORA live ISO (Docker required)
 	./scripts/build/build-iso.sh
+
+publish: ## Publish the built ISO as GitHub release assets (split)
+	./scripts/release/publish-iso.sh
 
 clean: ## Remove the build workspace and ISO output
 	rm -rf build/work build/output

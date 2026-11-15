@@ -18,6 +18,23 @@ Development: 0.1.0-dev
 
 VELCORA is currently under development and is not yet a stable release.
 
+## Download and try it
+
+Prebuilt live ISOs are published on the
+[releases page](https://github.com/R3N3MM/Velcora-Linux/releases).
+
+GitHub caps a release asset at 2 GiB, so each ISO is split into two parts.
+Download the parts, join them, and verify the checksum:
+
+```sh
+cat velcora-0.1.0-dev-amd64.iso.part* > velcora-0.1.0-dev-amd64.iso
+sha256sum -c velcora-0.1.0-dev-amd64.iso.sha256
+```
+
+Boot the resulting ISO in a virtual machine or write it to a USB drive.
+VirtualBox instructions are in
+[build/README.md](build/README.md#running-in-oracle-virtualbox).
+
 ## Repository Structure
 
 - branding/: Official visual identity and assets.
