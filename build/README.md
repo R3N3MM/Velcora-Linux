@@ -128,8 +128,9 @@ the VirtualBox version in use.
 Guest Additions 7.2.22 does not compile its optional `vboxvideo` driver
 against the Debian 13 kernel, so the installer prints a build failure for
 that module. Clipboard sharing, shared folders and VMSVGA display resizing
-come from `vboxguest` and `vboxsf`, which build and load normally; the
-helper reports this and the failure is harmless.
+come from `vboxguest` and `vboxsf`, which build and load normally, and the
+kernel's own `vboxvideo` driver remains available, so the failure is
+harmless.
 
 The live session runs from RAM. Guest Additions and any other changes are
 lost at reboot until the installer phase adds persistent installation.
@@ -138,17 +139,23 @@ lost at reboot until the installer phase adds persistent installation.
 
 | Field | Value |
 | --- | --- |
-| Date | 2026-11-14 |
+| Date | 2026-11-15 |
 | Version | 0.1.0-dev |
-| Source commit | `62fda30` |
-| Size | 2,208,104,448 bytes (2.1 GiB) |
-| SHA-256 | `fd10fee8568ab2798478daf26084faf7f24246fb508b10eb27f5ee5f00655c0e` |
+| Source commit | `28f96ee` |
+| Size | 2,227,011,584 bytes (2.1 GiB) |
+| SHA-256 | `507d6b3644d0cd04e9abf54d4a5bffdb6005bb14d33bfd0d5d487fb97dc5cf78` |
 | Boot | BIOS and UEFI (QEMU/KVM, OVMF) |
 
 Verified in the live session:
 
+- BIOS and UEFI boot both reach the Xfce desktop with no keypress, after
+  the 30-second boot-menu timeout.
 - LightDM autologin as `velcora`, Xfce panel and terminal working.
 - `sudo` accepts the `live` password; `velcora` is in the `sudo` group.
+- VirtualBox Guest Additions 7.2.22: `velcora-install-guest-additions`
+  found the mounted host disc and built `vboxguest` and `vboxsf` for
+  `6.12.117+deb13-amd64`; the helper reports that the modules load
+  automatically under VirtualBox.
 - `ansible 2.19.11`, `aws-cli 2.23.6`, `azure-cli 2.74.0`,
   `kubectl 1.32.3` all start and report their versions.
 - HTTPS egress works (`curl -sI https://deb.debian.org` returns
@@ -162,7 +169,7 @@ harmless `rdbms` module warning on first run; the command still works.
 ## Phases
 
 1. Build foundation — configuration, runner, validation. **(done)**
-2. First ISO build and boot test in a VM.
+2. ISO build, boot test and VM integration (VirtualBox Guest Additions). **(done)**
 3. Branding integration — fonts, palette, wallpapers, LightDM, Plymouth.
 4. Installer and disk installation.
 5. Cloud tooling, repositories, updates and hardening.
