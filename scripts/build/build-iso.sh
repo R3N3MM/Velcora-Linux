@@ -51,6 +51,8 @@ log "Running lb config and lb build (this takes 20–40 minutes on a first build
 	"$BUILDER_IMAGE" \
 	bash -euo pipefail -c '
 		export DEBIAN_FRONTEND=noninteractive
+		printf "Acquire::Retries \"8\";\nAcquire::http::Timeout \"30\";\n" \
+			> /etc/apt/apt.conf.d/90retries
 		apt-get update
 		apt-get install -y --no-install-recommends \
 			live-build ca-certificates \

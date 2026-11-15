@@ -26,6 +26,7 @@ for file in \
 	"$PACKAGE_DIR/velcora-system.list.chroot" \
 	"$PACKAGE_DIR/velcora-cloud.list.chroot" \
 	"$PACKAGE_DIR/velcora-vm.list.chroot" \
+	"$LIVE_DIR/config/apt/apt.conf" \
 	"$LIVE_DIR/config/includes.chroot/usr/local/bin/velcora-install-guest-additions" \
 	"$REPO_ROOT/scripts/build/build-iso.sh"; do
 	require_file "$file"
@@ -55,6 +56,12 @@ if grep -q 'VBoxLinuxAdditions.run' "$guest_additions_helper"; then
 	ok
 else
 	fail "velcora-install-guest-additions must run VBoxLinuxAdditions.run"
+fi
+
+if grep -q 'Acquire::Retries' "$LIVE_DIR/config/apt/apt.conf"; then
+	ok
+else
+	fail "config/apt/apt.conf must set Acquire::Retries for transient network failures"
 fi
 
 bootloader_isolinux="$LIVE_DIR/config/bootloaders/isolinux/isolinux.cfg"

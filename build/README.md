@@ -31,6 +31,7 @@ build/
   live-build/
     auto/config                  lb config options
     config/package-lists/        package selections (*.list.chroot)
+    config/apt/                  apt retry settings for large downloads
     config/bootloaders/          boot-menu timeout overrides
     config/includes.chroot/      files copied into the image
   work/                          scratch copy used by the builder (ignored)
@@ -48,6 +49,10 @@ Requirements: Docker, make, bash, 15 GiB free disk.
 make validate   # fast; checks scripts, lists and version
 make iso        # 20–40 minutes on a first build, ~2 GB download
 ```
+
+A full build fetches well over a gigabyte, so apt retries transient DNS and
+connection failures instead of aborting (`config/apt/apt.conf` in the image,
+`/etc/apt/apt.conf.d/90retries` in the builder container).
 
 The result is written to:
 
