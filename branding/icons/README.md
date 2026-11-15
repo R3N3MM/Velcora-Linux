@@ -1,7 +1,8 @@
 # VELCORA icons
 
-64x64 icons in SVG (source) and PNG. Regenerate with
-`python3 scripts/build/generate-icons.py` (needs python3-cairosvg).
+64x64 icons in SVG (source) and PNG.  The build installs them as the
+`Velcora` icon theme through `scripts/build/sync-branding-assets.py`, which
+creates the freedesktop aliases and the theme index.
 
 - `taskbar/`: terminal, browser, application, workspaces, launcher,
   text-editor, store, settings, folder. Dark rounded tile, chrome-silver
