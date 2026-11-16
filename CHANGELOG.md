@@ -30,7 +30,8 @@ First development image.  Not a stable release; see *Known limitations*.
   inspection, hardening, monitoring, network capture, storage and backup,
   Ansible linting and shell utilities (55 packages, all Debian main).  Tools
   outside Debian main (Terraform, Helm, gcloud, ...) are skipped on purpose
-  and documented for manual install.
+  and documented for manual install.  `prometheus-node-exporter` listens on
+  `127.0.0.1:9100` by default.
 - Validation tooling: `make validate` (static configuration),
   `make lint` (shellcheck and Python), `make test` (branding assets, ISO
   structure, checksum, package resolution), `make checksum` and

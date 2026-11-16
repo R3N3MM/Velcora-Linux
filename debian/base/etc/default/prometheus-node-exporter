@@ -1,0 +1,7 @@
+# Arguments for prometheus-node-exporter (from the Debian package unit).
+#
+# VELCORA keeps the metrics endpoint on localhost by default so a fresh
+# install does not expose :9100 on every interface. To let a Prometheus
+# server scrape this machine, replace the address with :9100 or with the
+# specific interface address and restart the service.
+ARGS="--web.listen-address=127.0.0.1:9100"

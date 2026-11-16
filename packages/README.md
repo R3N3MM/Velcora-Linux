@@ -38,6 +38,11 @@ Deliberately absent: `fail2ban` (no SSH server in the image), `openvpn` and
 the Qt Wireshark GUI (size), `borgbackup` (restic is the chosen backup tool),
 and container runtimes — install `docker.io` or `podman` yourself if needed.
 
+`prometheus-node-exporter` is bound to `127.0.0.1:9100` by
+`debian/base/etc/default/prometheus-node-exporter`, so a fresh install does
+not expose metrics on every interface.  Change that file and restart the
+service to let a Prometheus server scrape over the network.
+
 ## Size
 
 Measured in a trixie container with the build's recommends setting: the set

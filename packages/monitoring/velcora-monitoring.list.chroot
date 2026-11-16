@@ -1,6 +1,6 @@
 # Local metrics and resource inspection.
-# node_exporter is expected to be bound to localhost by a drop-in; see
-# packages/README.md.
+# node_exporter is bound to localhost by
+# debian/base/etc/default/prometheus-node-exporter.
 prometheus-node-exporter
 sysstat
 btop

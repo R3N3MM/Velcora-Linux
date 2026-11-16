@@ -70,6 +70,7 @@ for file in \
 	"$DEBIAN/base/etc/os-release" \
 	"$DEBIAN/base/etc/issue" \
 	"$DEBIAN/base/usr/lib/os-release" \
+	"$DEBIAN/base/etc/default/prometheus-node-exporter" \
 	"$DEBIAN/installer/etc/calamares/settings.conf" \
 	"$DEBIAN/installer/etc/calamares/modules/shellprocess.conf" \
 	"$DEBIAN/installer/etc/calamares/branding/velcora/branding.desc" \
@@ -160,6 +161,7 @@ for file in \
 	"$stage_tmp/live-build/config/hooks/normal/0100-velcora-branding.hook.chroot" \
 	"$stage_tmp/live-build/config/hooks/normal/0200-velcora-installer.hook.chroot" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/os-release" \
+	"$stage_tmp/live-build/config/includes.chroot/etc/default/prometheus-node-exporter" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/calamares/settings.conf" \
 	"$stage_tmp/live-build/config/includes.chroot/usr/local/bin/velcora-installer" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" \
@@ -221,6 +223,12 @@ if grep -qF "Velcora Linux $version" "$DEBIAN/base/etc/issue"; then
 	ok
 else
 	fail "/etc/issue must name Velcora Linux $version"
+fi
+if grep -qxF 'ARGS="--web.listen-address=127.0.0.1:9100"' \
+	"$DEBIAN/base/etc/default/prometheus-node-exporter"; then
+	ok
+else
+	fail "node_exporter must listen on localhost by default"
 fi
 
 # Wallpapers: every unique source image ships, and the default is a symlink.
