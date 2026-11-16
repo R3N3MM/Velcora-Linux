@@ -1,6 +1,6 @@
 # VELCORA build system
 
-Status: **phase 3 — branded ISO with a Calamares installer.** BIOS and UEFI
+Status: **0.1.0-dev — branded ISO with a Calamares installer.** BIOS and UEFI
 boot reach the branded Xfce desktop, VirtualBox guest tools are preinstalled,
 and **Install Velcora** launches Calamares from the live desktop. An
 end-to-end disk installation still needs a test pass.
@@ -13,16 +13,20 @@ end-to-end disk installation still needs a test pass.
 - **Branding:** Velcora ISO metadata and boot menus, `os-release`, a default
   wallpaper for new users, and Calamares branding derived from
   `calamares-settings-debian`.
+- **Typefaces:** Inter Variable for the desktop and GTK applications;
+  JetBrains Mono 11 for `xfce4-terminal` only, selected through the
+  `xfce4-terminal` xfconf channel.
 - **Root filesystem:** single xz-compressed squashfs.
 - **Build isolation:** the ISO is built inside `debian:trixie` in Docker
   with `--privileged`, so the host needs no build dependencies.
 - **Packages:** split into desktop, system, cloud, VM and installer lists
-  under `live-build/config/package-lists/`. Kubernetes Helm is not packaged
-  in Debian (the `helm` package is Emacs Helm), so it will be added from the
-  upstream repository in the cloud-tooling phase.
+  under `debian/package-lists/`, which staging copies into the live-build
+  tree. Kubernetes Helm is not packaged in Debian (the `helm` package is
+  Emacs Helm) and is not installed; tools outside Debian main need a
+  maintainer decision (see `cloud/README.md`).
 - **VirtualBox:** Debian 13 no longer ships `virtualbox-guest-utils` or
   `virtualbox-guest-x11` in stable. The two userspace packages are pinned
-  from unstable/contrib at build time (`config/archives/velcora-contrib.*`);
+  from unstable/contrib at build time (`debian/archives/velcora-contrib.*`);
   the source and pin are removed before the image is created. They use the
   kernel's in-tree `vboxguest`/`vboxsf`/`vboxvideo` modules. The host's
   Guest Additions disc remains available as an update path. See
@@ -51,7 +55,7 @@ debian/
 desktop/
   xfce/                          Xfce desktop and per-user defaults
   lightdm/                       LightDM greeter branding
-  gtk-3.0/, fonts/               GTK settings and Inter font preference
+  gtk-3.0/, fonts/               GTK settings and Inter UI font preference
   autostart/                     live-only installer launcher
 branding/
   logo/, wallpapers/, icons/     source artwork rendered into the image
@@ -66,6 +70,9 @@ scripts/build/
   render-boot-branding.py        splash, Plymouth frames, logo images
   sync-branding-assets.py        wallpapers and the Velcora icon theme
   validate-config.sh             static checks, used by CI and make
+scripts/validation/              branding, ISO, checksum, package and lint checks
+scripts/maintenance/             guarded commit helper
+testing/boot/                    headless BIOS/UEFI QEMU smoke test
 ```
 
 `make iso` renders `branding/` into `build/generated/`, stages the source
@@ -78,7 +85,10 @@ Requirements: Docker, make, bash, 15 GiB free disk.
 
 ```sh
 make validate   # fast; checks scripts, lists and version
+make lint       # validate plus shellcheck and Python syntax
 make iso        # 20–40 minutes on a first build, ~2 GB download
+make test       # branding, ISO structure, checksum, package resolution
+make test-boot  # headless BIOS and UEFI QEMU smoke test
 ```
 
 A full build fetches well over a gigabyte, so apt retries transient DNS and
@@ -131,7 +141,13 @@ public release.
 
 ## Testing an image
 
-Boot in a VM:
+`make test` checks the ISO structure with `xorriso`, verifies its SHA-256 and
+resolves the package lists.  `make test-boot` boots it headless in QEMU under
+BIOS and UEFI and fails unless a login/desktop-looking frame appears twice in
+a row; screenshots land in `build/output/boot-test-*.ppm`.  See
+`testing/README.md` for options and requirements.
+
+Boot manually in a VM:
 
 ```sh
 qemu-system-x86_64 -m 4096 -smp 2 -enable-kvm \
@@ -227,7 +243,12 @@ harmless `rdbms` module warning on first run; the command still works.
 
 1. Build foundation — configuration, runner, validation. **(done)**
 2. ISO build, boot test and VM integration (VirtualBox Guest Additions). **(done)**
-3. Branding integration — fonts, palette, wallpapers, LightDM, Plymouth.
-4. Installer and disk installation.
-5. Cloud tooling, repositories, updates and hardening.
-6. CI image builds, signing and release automation.
+3. Branding integration — fonts, wallpapers, LightDM, Plymouth, boot menus. **(done)**
+4. Installer and disk installation.  Calamares and its configuration are in
+   the image; an end-to-end disk install test is still open.
+5. Cloud tooling, repositories, updates and hardening.  The Debian-packaged
+   clients are installed; tooling outside trixie main and a project package
+   repository are not decided.
+6. CI image builds, signing and release automation.  Workflows and split
+   release publishing are written; the first tagged run and any signing are
+   still open.

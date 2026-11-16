@@ -1,29 +1,32 @@
 # VELCORA Linux
 
-VELCORA is a Debian-based Linux operating system focused on Cloud Administration.
+VELCORA is a Debian-based Linux distribution focused on Cloud
+Administration.
 
-## Project Objectives
+- **Base:** Debian 13 (trixie), amd64, built with live-build.
+- **Image:** hybrid BIOS/UEFI ISO with branded isolinux and GRUB menus and a
+  Plymouth boot theme.
+- **Desktop:** Xfce with LightDM.  Inter is the UI typeface; JetBrains Mono
+  is used only by `xfce4-terminal`.
+- **Installer:** Calamares, started from the live desktop by
+  **Install Velcora**.
+- **Cloud tooling:** `ansible`, `awscli`, `azure-cli`, `kubernetes-client`,
+  `python3`, `git`, `openssh-client` and `yq` from Debian trixie.
 
-- Provide a dedicated Cloud Administration Linux environment.
-- Build on a Debian foundation.
-- Provide an Xfce desktop experience.
-- Develop a consistent VELCORA boot experience.
-- Include appropriate system administration tools.
-- Prioritise security, reliability and maintainability.
-- Support transparent community development.
+## Project status
 
-## Project Status
-
-Development: 0.1.0-dev
-
-VELCORA is currently under development and is not yet a stable release.
+Development: **0.1.0-dev**.  This is a development image, not a stable
+release.  The live image boots on BIOS and UEFI, reaches the Xfce desktop and
+starts the installer; a complete installation to disk has not been verified
+end to end.  See [CHANGELOG.md](CHANGELOG.md) for what is in the image and
+what is still missing.
 
 ## Download and try it
 
 Prebuilt live ISOs are published on the
 [releases page](https://github.com/R3N3MM/Velcora-Linux/releases).
 
-GitHub caps a release asset at 2 GiB, so each ISO is split into two parts.
+GitHub caps a release asset at 2 GiB, so each ISO is split into parts.
 Download the parts, join them, and verify the checksum:
 
 ```sh
@@ -31,29 +34,61 @@ cat velcora-0.1.0-dev-amd64.iso.part* > velcora-0.1.0-dev-amd64.iso
 sha256sum -c velcora-0.1.0-dev-amd64.iso.sha256
 ```
 
-Boot the resulting ISO in a virtual machine or write it to a USB drive.
-VirtualBox instructions are in
+Then boot it in a virtual machine or write it to a USB stick.  Step-by-step
+instructions, live-session credentials and known limitations are in
+[documentation/installation/README.md](documentation/installation/README.md).
+VirtualBox notes are in
 [build/README.md](build/README.md#running-in-oracle-virtualbox).
 
-## Repository Structure
+## Build from source
 
-- branding/: Official visual identity and assets.
-- build/: Operating system build configuration and scripts.
-- debian/: Debian system integration.
-- desktop/: Xfce desktop configuration.
-- boot/: Bootloader, initramfs and Plymouth configuration.
-- packages/: Selected VELCORA software packages.
-- cloud/: Cloud Administration functionality.
-- infrastructure/: Core system infrastructure.
-- repository/: Architecture and governance.
-- testing/: Quality assurance and testing.
-- documentation/: User and developer documentation.
-- scripts/: Development and maintenance scripts.
+Requirements: Docker, make, bash and 15 GiB free disk.  The build runs inside
+`debian:trixie`, so no Debian build tools are needed on the host.
 
-## Contributions
+```sh
+make validate   # static configuration checks, seconds
+make iso        # 20–40 minutes on a first build, ~2 GB download
+make test       # branding, ISO structure, checksum, package lists
+make test-boot  # headless BIOS and UEFI QEMU smoke test
+```
 
-See CONTRIBUTING.md for contribution requirements.
+The ISO and its checksum are written to `build/output/`.  Details are in
+[build/README.md](build/README.md),
+[testing/README.md](testing/README.md) and
+[documentation/development/README.md](documentation/development/README.md).
+
+## Repository structure
+
+- `branding/` — logo, wallpapers, icons, fonts and palette; rendered into
+  the image at build time.
+- `boot/` — bootloader menus, Plymouth theme and boot hooks.
+- `build/` — live-build configuration, build output locations and the ISO
+  build documentation.
+- `debian/` — os-release, Calamares, apt pins, package lists, hooks and
+  live-session sudoers.
+- `desktop/` — Xfce, LightDM, GTK and font configuration.
+- `documentation/` — installation and development guides; the remaining
+  guides are placeholders.
+- `packages/` — placeholder categories; the packages actually installed are
+  in `debian/package-lists/`.
+- `cloud/` — placeholder cloud-administration domains and notes on tools
+  Debian does not package.
+- `infrastructure/` — placeholder system, hardening and networking material.
+- `repository/` — placeholder repository and governance material; releases
+  are GitHub release assets, not an APT repository.
+- `scripts/` — build, validation, release and maintenance scripts.
+- `testing/` — headless boot smoke test; other test categories are empty.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow, commit format and
+review expectations.  Security reports go through
+[SECURITY.md](SECURITY.md); behaviour expectations are in
+[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 ## Licence
 
-The project licence is pending approval.
+VELCORA's own scripts, configuration and documentation are released under
+the MIT licence in [LICENSE](LICENSE).  Third-party packages, the bundled
+fonts and the Velcora branding keep their own terms, which `LICENSE` also
+notes.

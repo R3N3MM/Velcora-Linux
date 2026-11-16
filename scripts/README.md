@@ -10,6 +10,16 @@
 - `build/sync-branding-assets.py`: stages wallpapers and builds the
   `Velcora` icon theme.
 - `build/validate-config.sh`: static source and composition checks.
+- `validation/check-branding.sh`: required artwork, wallpapers, icon pairs
+  and font licences.
+- `validation/check-iso.sh`: hybrid BIOS/UEFI structure of a built ISO.
+- `validation/checksum.sh`: verifies the ISO against its `.sha256`.
+- `validation/check-packages.sh`: resolves every package-list entry in a
+  `debian:trixie` container.
+- `validation/lint.sh`: shellcheck and Python syntax checks.
 - `release/publish-iso.sh`: splits and publishes the ISO on GitHub releases.
+- `maintenance/safe-commit.sh`: guarded commit and push helper.
 
-`make validate` runs the static checks; `make iso` runs everything above.
+`make validate` runs the static checks; `make lint` adds the linters;
+`make iso` runs the build; `make test` and `make test-boot` check a built
+image.
