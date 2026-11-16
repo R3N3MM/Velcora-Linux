@@ -1,0 +1,63 @@
+name: Build ISO
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: iso-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    steps:
+      - name: Check out
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+            /opt/hostedtoolcache/CodeQL /usr/local/share/boost \
+            /usr/share/swift /usr/local/share/powershell /usr/share/miniconda \
+            /opt/microsoft /usr/local/lib/node_modules /usr/local/share/chromium \
+            /usr/share/chrome /usr/share/firefox /usr/lib/firefox /usr/lib/mono \
+            /usr/lib/jvm /usr/lib/R /usr/share/r /usr/local/go /opt/az \
+            /usr/lib/postgresql /usr/lib/mysql /usr/share/mysql \
+            /usr/share/postgresql /usr/local/share/.cache
+          sudo apt-get clean
+          df -h /
+
+      - name: Build ISO
+        run: make iso
+
+      - name: Verify ISO
+        run: make test
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: velcora-iso-${{ github.sha }}
+          path: |
+            build/output/*.iso
+            build/output/*.sha256
+            build/output/build.log
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
+
+      - name: Publish release assets
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: make publish

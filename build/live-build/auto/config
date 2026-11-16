@@ -4,8 +4,8 @@
 
 set -e
 
-CONFIG_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-REPO_DIR="$(CDPATH= cd -- "${CONFIG_DIR}/../../.." && pwd)"
+CONFIG_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
+REPO_DIR="$(CDPATH='' cd -- "${CONFIG_DIR}/../../.." && pwd)"
 VELCORA_VERSION="${VELCORA_VERSION:-$(cat "${REPO_DIR}/VERSION" 2>/dev/null || echo 0.1.0-dev)}"
 
 lb config noauto \

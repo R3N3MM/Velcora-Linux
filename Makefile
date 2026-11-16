@@ -5,13 +5,28 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
-.PHONY: help validate iso publish clean distclean
+.PHONY: help validate lint test test-boot checksum iso publish clean distclean
 
 help: ## Show available targets
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-12s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 validate: ## Check scripts and live-build configuration
 	./scripts/build/validate-config.sh
+
+lint: validate ## Shellcheck and Python syntax checks
+	./scripts/validation/lint.sh
+
+test: lint ## Verify branding, ISO, checksum and package lists
+	./scripts/validation/check-branding.sh
+	./scripts/validation/check-iso.sh
+	./scripts/validation/checksum.sh
+	./scripts/validation/check-packages.sh
+
+test-boot: ## Headless QEMU smoke test (BIOS and UEFI)
+	./testing/boot/boot-test.sh
+
+checksum: ## Verify the ISO SHA-256 checksum
+	./scripts/validation/checksum.sh
 
 iso: validate ## Build the VELCORA live ISO (Docker required)
 	./scripts/build/build-iso.sh
