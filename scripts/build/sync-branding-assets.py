@@ -231,6 +231,15 @@ ICONS = [
         ["microphone-sensitivity-low", "microphone-sensitivity-low-symbolic"],
     ),
     (
+        "panel/mic-25",
+        "status",
+        "velcora-mic-25",
+        [
+            "microphone-sensitivity-very-low",
+            "microphone-sensitivity-very-low-symbolic",
+        ],
+    ),
+    (
         "panel/mic-muted",
         "status",
         "velcora-mic-muted",
