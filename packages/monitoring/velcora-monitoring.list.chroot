@@ -1,0 +1,9 @@
+# Local metrics and resource inspection.
+# node_exporter is expected to be bound to localhost by a drop-in; see
+# packages/README.md.
+prometheus-node-exporter
+sysstat
+btop
+iotop
+iftop
+lm-sensors

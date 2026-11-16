@@ -11,7 +11,9 @@ Administration.
 - **Installer:** Calamares, started from the live desktop by
   **Install Velcora**.
 - **Cloud tooling:** `ansible`, `awscli`, `azure-cli`, `kubernetes-client`,
-  `python3`, `git`, `openssh-client` and `yq` from Debian trixie.
+  `python3`, `git`, `openssh-client` and `yq` from Debian trixie, plus
+  inspection, hardening, monitoring, capture, storage/backup and shell
+  utilities from `packages/`.
 
 ## Project status
 
@@ -69,8 +71,8 @@ The ISO and its checksum are written to `build/output/`.  Details are in
 - `desktop/` — Xfce, LightDM, GTK and font configuration.
 - `documentation/` — installation and development guides; the remaining
   guides are placeholders.
-- `packages/` — placeholder categories; the packages actually installed are
-  in `debian/package-lists/`.
+- `packages/` — cloud-administration package lists per category, staged into
+  the build next to `debian/package-lists/`.
 - `cloud/` — placeholder cloud-administration domains and notes on tools
   Debian does not package.
 - `infrastructure/` — placeholder system, hardening and networking material.

@@ -46,6 +46,13 @@ for file in \
 	"$DEBIAN/package-lists/velcora-cloud.list.chroot" \
 	"$DEBIAN/package-lists/velcora-vm.list.chroot" \
 	"$DEBIAN/package-lists/velcora-installer.list.chroot" \
+	"$REPO_ROOT/packages/core/velcora-core.list.chroot" \
+	"$REPO_ROOT/packages/security/velcora-security.list.chroot" \
+	"$REPO_ROOT/packages/monitoring/velcora-monitoring.list.chroot" \
+	"$REPO_ROOT/packages/networking/velcora-networking.list.chroot" \
+	"$REPO_ROOT/packages/storage/velcora-storage.list.chroot" \
+	"$REPO_ROOT/packages/administration/velcora-administration.list.chroot" \
+	"$REPO_ROOT/packages/utilities/velcora-utilities.list.chroot" \
 	"$DEBIAN/apt/apt.conf" \
 	"$DEBIAN/archives/velcora-contrib.list.chroot" \
 	"$DEBIAN/archives/velcora-contrib.pref.chroot" \
@@ -162,6 +169,15 @@ for file in \
 	"$stage_tmp/live-build/config/includes.chroot/usr/share/fonts/truetype/velcora/JetBrainsMono-Regular.ttf" \
 	"$stage_tmp/live-build/config/includes.chroot/usr/share/doc/fonts-jetbrains-mono-velcora/OFL.txt"; do
 	if [[ -f "$file" ]]; then ok; else fail "staging did not produce ${file#"$stage_tmp"/}"; fi
+done
+
+for category in core security monitoring networking storage administration utilities; do
+	staged="$stage_tmp/live-build/config/package-lists/velcora-$category.list.chroot"
+	if [[ -s "$staged" ]]; then
+		ok
+	else
+		fail "staging did not produce packages/$category/velcora-$category.list.chroot"
+	fi
 done
 
 staged_fonts="$stage_tmp/live-build/config/includes.chroot/usr/share/fonts/truetype/velcora"
@@ -501,7 +517,7 @@ if command -v shellcheck >/dev/null 2>&1; then
 fi
 
 declare -A seen=()
-for list in "$DEBIAN/package-lists"/*.list.chroot; do
+for list in "$DEBIAN/package-lists"/*.list.chroot "$REPO_ROOT"/packages/*/*.list.chroot; do
 	[[ -e "$list" ]] || continue
 	while IFS= read -r package || [[ -n "$package" ]]; do
 		[[ -z "$package" || "$package" == \#* ]] && continue

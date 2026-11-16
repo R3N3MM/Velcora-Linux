@@ -57,16 +57,19 @@ privileges inside the container; it is never run by CI on pull requests.
 - `build/live-build/auto/config` — live-build options and ISO metadata.
 - `scripts/build/`, `scripts/validation/`, `scripts/release/`,
   `scripts/maintenance/` — build, checks, release and commit helpers.
+- `packages/<category>/` — cloud-administration package lists.
 - `testing/boot/` — headless boot smoke test.
-- `packages/`, `cloud/`, `infrastructure/`, `repository/` — placeholders;
-  see their READMEs.
+- `cloud/`, `infrastructure/`, `repository/` — placeholders; see their
+  READMEs.
 
 ## Changing things
 
-- **Packages:** edit `debian/package-lists/*.list.chroot`, then
+- **Packages:** the base desktop/system/cloud-client/VM/installer sets live
+  in `debian/package-lists/*.list.chroot`; cloud-administration tooling lives
+  in `packages/<category>/velcora-<category>.list.chroot`.  Add a package to
+  one of them (never both — validation rejects duplicates), then run
   `./scripts/validation/check-packages.sh` to confirm every name resolves in
-  trixie.  Debian main/contrib only; third-party repositories need a
-  maintainer decision.
+  trixie.  Debian main/contrib only; third-party repositories are not used.
 - **Desktop defaults:** edit the files under `desktop/`; they mirror their
   image paths.  `validate-config.sh` asserts the icon theme, the Inter UI
   font, the JetBrains Mono terminal font and the wallpaper.

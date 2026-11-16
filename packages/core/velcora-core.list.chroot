@@ -1,0 +1,9 @@
+# Core inspection tools for day-to-day administration.
+# Every entry is Debian 13 (trixie) main.
+file
+lsof
+psmisc
+pciutils
+usbutils
+strace
+time

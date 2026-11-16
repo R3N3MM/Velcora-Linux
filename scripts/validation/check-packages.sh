@@ -17,7 +17,8 @@ command -v "$DOCKER" >/dev/null 2>&1 || die "$DOCKER is required"
 "$DOCKER" info >/dev/null 2>&1 || die "cannot connect to the Docker daemon"
 
 shopt -s nullglob
-lists=("$REPO_ROOT"/debian/package-lists/*.list.chroot)
+lists=("$REPO_ROOT"/debian/package-lists/*.list.chroot
+	"$REPO_ROOT"/packages/*/*.list.chroot)
 (( ${#lists[@]} > 0 )) || die "no package lists found"
 
 count="$(sed -e 's/#.*//' "${lists[@]}" | awk 'NF { n++ } END { print n + 0 }')"
@@ -42,7 +43,8 @@ cp /src/debian/archives/velcora-contrib.pref.chroot \
 apt-get -o Acquire::Retries=3 update -qq
 
 mapfile -t packages < <(
-	sed -e 's/#.*//' /src/debian/package-lists/*.list.chroot |
+	sed -e 's/#.*//' /src/debian/package-lists/*.list.chroot \
+		/src/packages/*/*.list.chroot |
 		awk 'NF { print $1 }'
 )
 (( ${#packages[@]} > 0 ))
@@ -53,5 +55,6 @@ if ! apt-get install --simulate --no-install-recommends \
 	exit 1
 fi
 
-printf 'OK — %d package lists resolve in trixie\n' "$(ls /src/debian/package-lists/*.list.chroot | wc -l)"
+printf 'OK — %d package lists resolve in trixie\n' \
+	"$(ls /src/debian/package-lists/*.list.chroot /src/packages/*/*.list.chroot | wc -l)"
 CONTAINER

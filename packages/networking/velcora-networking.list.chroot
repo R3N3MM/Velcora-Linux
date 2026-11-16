@@ -1,0 +1,15 @@
+# Network diagnosis, capture and remote access.
+# The complete OpenVPN stack and the Qt Wireshark GUI are intentionally left
+# out; tshark covers capture analysis from the terminal.
+nmap
+tcpdump
+tshark
+mtr-tiny
+traceroute
+bind9-dnsutils
+socat
+netcat-openbsd
+ethtool
+iperf3
+wireguard-tools
+sshfs

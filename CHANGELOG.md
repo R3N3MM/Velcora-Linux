@@ -26,6 +26,11 @@ First development image.  Not a stable release; see *Known limitations*.
 - VirtualBox guest userspace packages pinned from unstable/contrib and
   removed from the image after installation; on-demand Guest Additions
   helper for newer VirtualBox versions.
+- Cloud-administration tooling in seven category lists under `packages/`:
+  inspection, hardening, monitoring, network capture, storage and backup,
+  Ansible linting and shell utilities (55 packages, all Debian main).  Tools
+  outside Debian main (Terraform, Helm, gcloud, ...) are skipped on purpose
+  and documented for manual install.
 - Validation tooling: `make validate` (static configuration),
   `make lint` (shellcheck and Python), `make test` (branding assets, ISO
   structure, checksum, package resolution), `make checksum` and
@@ -43,12 +48,15 @@ First development image.  Not a stable release; see *Known limitations*.
 - The 2.1 GiB image built from commit `28f96ee` booted on BIOS and UEFI
   (QEMU/KVM with OVMF), reached LightDM and the Xfce desktop, ran
   `ansible`, `aws`, `az` and `kubectl`, and shut down cleanly.
-- All 85 package-list entries resolve in Debian trixie.
+- All 140 package-list entries across the twelve lists resolve in Debian
+  trixie.
 - The terminal font selection was checked against `xfconf` in trixie: it
   reports `JetBrains Mono 11` with `font-use-system` false.
 
 ### Known limitations
 
+- The image is about 2.2 GiB and does not fit under 2 GiB, so releases stay
+  split into parts.
 - A complete installation to disk has not been executed end to end.
 - Secure Boot, LUKS installation and dual boot are untested.
 - The empty skeleton folders under `packages/`, `cloud/`, `infrastructure/`,

@@ -1,0 +1,11 @@
+# Host hardening, audit and integrity tooling.
+# ufw and sudo already come from debian/package-lists/velcora-system.list.chroot.
+# fail2ban is deliberately absent: the image ships no SSH server.
+apparmor
+apparmor-utils
+auditd
+aide
+lynis
+rkhunter
+unattended-upgrades
+needrestart

@@ -20,10 +20,11 @@ end-to-end disk installation still needs a test pass.
 - **Build isolation:** the ISO is built inside `debian:trixie` in Docker
   with `--privileged`, so the host needs no build dependencies.
 - **Packages:** split into desktop, system, cloud, VM and installer lists
-  under `debian/package-lists/`, which staging copies into the live-build
-  tree. Kubernetes Helm is not packaged in Debian (the `helm` package is
-  Emacs Helm) and is not installed; tools outside Debian main need a
-  maintainer decision (see `cloud/README.md`).
+  under `debian/package-lists/`, plus seven cloud-administration category
+  lists under `packages/<category>/`.  Staging copies both sets into the
+  live-build tree, and validation rejects duplicates.  Kubernetes Helm is not
+  packaged in Debian (the `helm` package is Emacs Helm) and is not installed;
+  tools outside Debian main are skipped on purpose (see `cloud/README.md`).
 - **VirtualBox:** Debian 13 no longer ships `virtualbox-guest-utils` or
   `virtualbox-guest-x11` in stable. The two userspace packages are pinned
   from unstable/contrib at build time (`debian/archives/velcora-contrib.*`);
@@ -57,6 +58,9 @@ desktop/
   lightdm/                       LightDM greeter branding
   gtk-3.0/, fonts/               GTK settings and Inter UI font preference
   autostart/                     live-only installer launcher
+packages/
+  <category>/                    cloud-admin package lists, staged into the
+                                 live-build package-lists/ directory
 branding/
   logo/, wallpapers/, icons/     source artwork rendered into the image
 build/
@@ -247,8 +251,9 @@ harmless `rdbms` module warning on first run; the command still works.
 4. Installer and disk installation.  Calamares and its configuration are in
    the image; an end-to-end disk install test is still open.
 5. Cloud tooling, repositories, updates and hardening.  The Debian-packaged
-   clients are installed; tooling outside trixie main and a project package
-   repository are not decided.
+   clients and the `packages/` category tooling are installed; tools outside
+   trixie main are skipped by decision (see `cloud/README.md`), and no
+   project package repository exists.
 6. CI image builds, signing and release automation.  Workflows and split
    release publishing are written; the first tagged run and any signing are
    still open.

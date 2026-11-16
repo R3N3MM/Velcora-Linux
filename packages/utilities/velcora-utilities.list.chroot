@@ -1,0 +1,10 @@
+# Shell and file conveniences.
+# p7zip-full is a transitional package in trixie; 7zip is the real one.
+tree
+bat
+fd-find
+ripgrep
+fzf
+pv
+7zip
+mc

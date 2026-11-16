@@ -1,0 +1,13 @@
+# Disk, filesystem and backup tooling.
+# restic is the chosen backup tool (native S3 support); borgbackup and
+# zfsutils-linux (not in main) are not installed.
+ncdu
+smartmontools
+gdisk
+lvm2
+mdadm
+nfs-common
+cifs-utils
+restic
+hdparm
+testdisk

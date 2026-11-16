@@ -1,0 +1,9 @@
+# Configuration management and workstation helpers.
+# ansible, awscli, azure-cli, kubernetes-client and git already come from
+# debian/package-lists/velcora-cloud.list.chroot.
+# Container runtimes (docker.io, podman) are not installed by default because
+# the ISO is already over 2 GB; install one with apt if needed.
+pipx
+ansible-lint
+open-vm-tools
+debootstrap

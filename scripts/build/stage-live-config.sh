@@ -57,7 +57,7 @@ for directory in boot boot/bootloaders boot/hooks boot/plymouth/velcora \
 	debian debian/apt debian/archives debian/base debian/hooks \
 	debian/installer debian/package-lists debian/vm \
 	desktop desktop/autostart desktop/fonts desktop/gtk-3.0 \
-	desktop/lightdm desktop/xfce; do
+	desktop/lightdm desktop/xfce packages; do
 	[[ -d "$SOURCE_ROOT/$directory" ]] \
 		|| die "missing source directory: $directory"
 done
@@ -71,6 +71,17 @@ mkdir -p "$CONFIG/apt" "$CONFIG/archives" "$CONFIG/package-lists" \
 cp -a "$SOURCE_ROOT/debian/apt/." "$CONFIG/apt/"
 cp -a "$SOURCE_ROOT/debian/archives/." "$CONFIG/archives/"
 cp -a "$SOURCE_ROOT/debian/package-lists/." "$CONFIG/package-lists/"
+
+# Category package lists.  packages/<category>/ owns the extra cloud-admin
+# tooling; the five debian/package-lists files keep the base, desktop, cloud
+# clients, VM agents and installer.  Validation rejects duplicates between
+# the two sets.
+category_lists=("$SOURCE_ROOT"/packages/*/*.list.chroot)
+(( ${#category_lists[@]} > 0 )) \
+	|| die "no category package lists found under packages/"
+for list in "${category_lists[@]}"; do
+	cp -a "$list" "$CONFIG/package-lists/"
+done
 cp -a "$SOURCE_ROOT/boot/bootloaders/." "$CONFIG/bootloaders/"
 cp -a "$SOURCE_ROOT/debian/hooks/." "$CONFIG/hooks/normal/"
 cp -a "$SOURCE_ROOT/boot/hooks/." "$CONFIG/hooks/normal/"
