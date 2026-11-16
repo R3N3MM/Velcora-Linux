@@ -74,8 +74,10 @@ for file in \
 	"$DEBIAN/sudoers/90-velcora-live" \
 	"$DESKTOP/xfce/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" \
 	"$DESKTOP/xfce/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" \
+	"$DESKTOP/xfce/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-terminal.xml" \
 	"$DESKTOP/xfce/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" \
 	"$DESKTOP/xfce/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" \
+	"$DESKTOP/xfce/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-terminal.xml" \
 	"$DESKTOP/lightdm/etc/lightdm/lightdm-gtk-greeter.conf.d/50-velcora.conf" \
 	"$DESKTOP/gtk-3.0/etc/gtk-3.0/settings.ini" \
 	"$DESKTOP/autostart/etc/xdg/autostart/velcora-install-icon.desktop" \
@@ -154,10 +156,26 @@ for file in \
 	"$stage_tmp/live-build/config/includes.chroot/etc/calamares/settings.conf" \
 	"$stage_tmp/live-build/config/includes.chroot/usr/local/bin/velcora-installer" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" \
+	"$stage_tmp/live-build/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-terminal.xml" \
 	"$stage_tmp/live-build/config/includes.chroot/usr/share/plymouth/themes/velcora/velcora.script" \
-	"$stage_tmp/live-build/config/includes.chroot/usr/share/fonts/truetype/velcora/InterVariable.ttf"; do
+	"$stage_tmp/live-build/config/includes.chroot/usr/share/fonts/truetype/velcora/InterVariable.ttf" \
+	"$stage_tmp/live-build/config/includes.chroot/usr/share/fonts/truetype/velcora/JetBrainsMono-Regular.ttf" \
+	"$stage_tmp/live-build/config/includes.chroot/usr/share/doc/fonts-jetbrains-mono-velcora/OFL.txt"; do
 	if [[ -f "$file" ]]; then ok; else fail "staging did not produce ${file#"$stage_tmp"/}"; fi
 done
+
+staged_fonts="$stage_tmp/live-build/config/includes.chroot/usr/share/fonts/truetype/velcora"
+jetbrains_count="$(find "$staged_fonts" -maxdepth 1 -type f -name 'JetBrainsMono-*.ttf' | wc -l)"
+if (( jetbrains_count == 16 )); then
+	ok
+else
+	fail "expected 16 staged JetBrains Mono faces, found $jetbrains_count"
+fi
+if find "$staged_fonts" -maxdepth 1 -type f -name 'JetBrainsMonoNL-*.ttf' -print -quit | grep -q .; then
+	fail "the no-ligature JetBrainsMonoNL family must not be installed"
+else
+	ok
+fi
 
 # --- branding --------------------------------------------------------------
 auto_config="$LIVE_DIR/auto/config"
@@ -240,6 +258,44 @@ if grep -qF '<family>Inter Variable</family>' "$DESKTOP/fonts/etc/fonts/conf.d/6
 	ok
 else
 	fail "fontconfig must prefer the bundled Inter typeface"
+fi
+
+# JetBrains Mono is the terminal typeface only.  Inter stays the desktop font,
+# and the terminal channel must not fall back to the system UI font.
+for settings in \
+	"$DESKTOP/xfce/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-terminal.xml" \
+	"$DESKTOP/xfce/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-terminal.xml"; do
+	if grep -qF '<property name="font-name" type="string" value="JetBrains Mono 11"/>' "$settings" \
+		&& grep -qF '<property name="font-use-system" type="bool" value="false"/>' "$settings"; then
+		ok
+	else
+		fail "${settings#"$REPO_ROOT"/} must select JetBrains Mono 11 with font-use-system disabled"
+	fi
+	if grep -qF 'Inter' "$settings"; then
+		fail "${settings#"$REPO_ROOT"/} must not select the UI typeface"
+	else
+		ok
+	fi
+done
+for settings in \
+	"$DESKTOP/xfce/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" \
+	"$DESKTOP/xfce/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml"; do
+	if grep -qF '<property name="FontName" type="string" value="Inter Variable 10"/>' "$settings"; then
+		ok
+	else
+		fail "${settings#"$REPO_ROOT"/} must keep Inter Variable as the UI font"
+	fi
+	if grep -qF 'JetBrains' "$settings"; then
+		fail "${settings#"$REPO_ROOT"/} must not select JetBrains Mono"
+	else
+		ok
+	fi
+done
+if grep -qF 'JetBrains' "$DESKTOP/gtk-3.0/etc/gtk-3.0/settings.ini" \
+	|| grep -qF 'JetBrains' "$DESKTOP/fonts/etc/fonts/conf.d/60-velcora.conf"; then
+	fail "JetBrains Mono must be selected by xfce4-terminal only"
+else
+	ok
 fi
 
 greeter="$DESKTOP/lightdm/etc/lightdm/lightdm-gtk-greeter.conf.d/50-velcora.conf"

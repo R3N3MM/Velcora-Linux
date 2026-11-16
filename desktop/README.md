@@ -6,6 +6,10 @@ staged into `build/work/live-build/config/includes.chroot/` at build time.
 - `xfce/etc/xdg/` and `xfce/etc/skel/`: desktop wallpaper and Xsettings for
   every user and for the live user's skeleton.  Xsettings selects the
   `Velcora` icon theme and the bundled Inter typeface.
+- `xfce/.../xfce4-terminal.xml`: the `xfce4-terminal` xfconf channel.  It
+  selects `JetBrains Mono 11` with `font-use-system` disabled, so only the
+  terminal uses the monospace face; Xsettings, GTK and LightDM keep Inter.
+  `terminalrc` is legacy and is not written.
 - `lightdm/`: a drop-in for `lightdm-gtk-greeter` using the default
   wallpaper, the Velcora icon theme and the rendered whale logo.
 - `gtk-3.0/`: GTK icon theme and font defaults for non-Xfce GTK tools.

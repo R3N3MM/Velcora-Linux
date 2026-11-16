@@ -90,6 +90,19 @@ install -Dm644 "$SOURCE_ROOT/branding/fonts/inter/InterVariable-Italic.ttf" \
 install -Dm644 "$SOURCE_ROOT/branding/fonts/inter/LICENSE.txt" \
 	"$INCLUDES/usr/share/doc/fonts-inter-velcora/LICENSE.txt"
 
+# Terminal typeface.  JetBrains Mono is selected only by xfce4-terminal
+# (desktop/xfce/.../xfce4-terminal.xml); the desktop and every other GTK
+# application keep Inter.  The NL (no-ligature) family is deliberately not
+# installed, so the ligature faces are the ones fontconfig resolves.
+for face in "$SOURCE_ROOT"/branding/fonts/jetbrains-mono/ttf/JetBrainsMono-*.ttf; do
+	install -Dm644 "$face" \
+		"$INCLUDES/usr/share/fonts/truetype/velcora/${face##*/}"
+done
+for doc in OFL.txt AUTHORS.txt README.md; do
+	install -Dm644 "$SOURCE_ROOT/branding/fonts/jetbrains-mono/$doc" \
+		"$INCLUDES/usr/share/doc/fonts-jetbrains-mono-velcora/$doc"
+done
+
 # Generated artwork.  A normal build always renders this first; static
 # validation can skip it with --allow-missing-generated.
 if [[ -n "$GENERATED" && -d "$GENERATED" ]]; then
