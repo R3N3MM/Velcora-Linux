@@ -53,17 +53,20 @@ fi
 pvd="${report%%$'\n''--- EL TORITO ---'*}"
 eltorito="${report#*'--- EL TORITO ---'$'\n'}"
 eltorito="${eltorito%%$'\n''--- FILESYSTEM ---'*}"
+# xorriso prints one mkisofs option per line; flatten so a boot record that
+# spans several lines can be matched as a whole.
+eltorito_flat="$(tr '\n' ' ' <<<"$eltorito")"
 
 grep -qi 'Volume id.*VELCORA' <<<"$pvd" \
 	|| fail "ISO volume ID is not VELCORA"
 grep -qi 'Velcora Linux' <<<"$pvd" \
 	|| fail "ISO application ID does not mention Velcora Linux"
 
-grep -Eq -- "-b [^ ]*isolinux[^ ]*\.bin.*-no-emul-boot|-no-emul-boot.*-b [^ ]*isolinux" <<<"$eltorito" \
+grep -Eq -- "-b [^ ]*isolinux[^ ]*\.bin.*-no-emul-boot|-no-emul-boot.*-b [^ ]*isolinux" <<<"$eltorito_flat" \
 	|| fail "no BIOS El Torito entry (isolinux.bin)"
-grep -q -- '-eltorito-alt-boot' <<<"$eltorito" \
+grep -q -- '-eltorito-alt-boot' <<<"$eltorito_flat" \
 	|| fail "no UEFI El Torito entry (missing -eltorito-alt-boot)"
-grep -Eq -- "-e [^ ]*efi[^ ]*(\.img)?|-eltorito-boot [^ ]*efi" <<<"$eltorito" \
+grep -Eq -- "-e [^ ]*efi[^ ]*(\.img)?|-eltorito-boot [^ ]*efi" <<<"$eltorito_flat" \
 	|| fail "no UEFI boot image in the El Torito record"
 grep -q '/live/filesystem.squashfs' <<<"$report" \
 	|| fail "the ISO does not contain /live/filesystem.squashfs"

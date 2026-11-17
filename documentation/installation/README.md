@@ -6,18 +6,23 @@ has not been verified end to end yet.  Test in a virtual machine first.
 
 ## 1. Get the image
 
-Prebuilt ISOs are attached to the
-[GitHub releases](https://github.com/R3N3MM/Velcora-Linux/releases).  GitHub
-caps a release asset at 2 GiB and the ISO is slightly larger, so it is
-published in parts together with a checksum file:
+No ISO is published yet.  There is no GitHub release and no release asset;
+build the image from source with the development instructions
+([development](../development/README.md), `build/README.md`):
+
+```sh
+make iso
+```
+
+The image is about 2.2 GiB, so it will not fit under GitHub's 2 GiB release
+asset limit.  When a release is published it will be attached in parts
+together with a checksum file, and the download is reassembled and verified
+like this:
 
 ```sh
 cat velcora-0.1.0-dev-amd64.iso.part* > velcora-0.1.0-dev-amd64.iso
 sha256sum -c velcora-0.1.0-dev-amd64.iso.sha256
 ```
-
-You can also build it yourself; see
-[development](../development/README.md) and `build/README.md`.
 
 ## 2. Boot it
 

@@ -101,6 +101,11 @@ install -Dm644 "$SOURCE_ROOT/branding/fonts/inter/InterVariable-Italic.ttf" \
 install -Dm644 "$SOURCE_ROOT/branding/fonts/inter/LICENSE.txt" \
 	"$INCLUDES/usr/share/doc/fonts-inter-velcora/LICENSE.txt"
 
+# Live-session sudoers rule.  The Calamares shellprocess job deletes it from
+# the target, so it must exist in the live chroot for that job to succeed.
+install -Dm440 "$SOURCE_ROOT/debian/sudoers/90-velcora-live" \
+	"$INCLUDES/etc/sudoers.d/90-velcora-live"
+
 # Terminal typeface.  JetBrains Mono is selected only by xfce4-terminal
 # (desktop/xfce/.../xfce4-terminal.xml); the desktop and every other GTK
 # application keep Inter.  The NL (no-ligature) family is deliberately not

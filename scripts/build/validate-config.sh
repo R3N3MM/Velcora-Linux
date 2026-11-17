@@ -71,6 +71,7 @@ for file in \
 	"$DEBIAN/base/etc/issue" \
 	"$DEBIAN/base/usr/lib/os-release" \
 	"$DEBIAN/base/etc/default/prometheus-node-exporter" \
+	"$DEBIAN/sudoers/90-velcora-live" \
 	"$DEBIAN/installer/etc/calamares/settings.conf" \
 	"$DEBIAN/installer/etc/calamares/modules/shellprocess.conf" \
 	"$DEBIAN/installer/etc/calamares/branding/velcora/branding.desc" \
@@ -162,6 +163,7 @@ for file in \
 	"$stage_tmp/live-build/config/hooks/normal/0200-velcora-installer.hook.chroot" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/os-release" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/default/prometheus-node-exporter" \
+	"$stage_tmp/live-build/config/includes.chroot/etc/sudoers.d/90-velcora-live" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/calamares/settings.conf" \
 	"$stage_tmp/live-build/config/includes.chroot/usr/local/bin/velcora-installer" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" \
