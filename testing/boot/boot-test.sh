@@ -126,7 +126,7 @@ run_mode() {
 	if [[ -r /dev/kvm && -w /dev/kvm ]]; then
 		qemu_args+=(-m 4096 -smp 2 -enable-kvm -cpu host)
 	else
-		qemu_args+=(-m 6144 -smp 4 -accel tcg,thread=multi)
+		qemu_args+=(-m 6144 -smp 4 -accel "tcg,thread=multi")
 		log "KVM is unavailable; using multithreaded software emulation (up to ${TIMEOUT}s)"
 	fi
 	if [[ "$mode" == "uefi" ]]; then

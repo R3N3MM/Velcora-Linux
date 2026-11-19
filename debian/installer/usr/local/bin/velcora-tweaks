@@ -18,12 +18,12 @@ install_desktop() {
 	printf '\nAvailable Debian desktop tasks (downloaded from your configured APT mirror):\n'
 	select choice in 'GNOME' 'KDE Plasma' 'MATE' 'LXDE' 'LXQt' 'Cinnamon' 'Back'; do
 		case "$choice" in
-			GNOME) task=task-gnome-desktop ;;
-			'KDE Plasma') task=task-kde-desktop ;;
-			MATE) task=task-mate-desktop ;;
-			LXDE) task=task-lxde-desktop ;;
-			LXQt) task=task-lxqt-desktop ;;
-			Cinnamon) task=task-cinnamon-desktop ;;
+			GNOME) task="task-gnome-desktop" ;;
+			'KDE Plasma') task="task-kde-desktop" ;;
+			MATE) task="task-mate-desktop" ;;
+			LXDE) task="task-lxde-desktop" ;;
+			LXQt) task="task-lxqt-desktop" ;;
+			Cinnamon) task="task-cinnamon-desktop" ;;
 			Back) return 0 ;;
 			*) printf 'Choose a number from 1 to 7.\n'; continue ;;
 		esac
