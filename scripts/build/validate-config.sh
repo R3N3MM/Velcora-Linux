@@ -298,13 +298,11 @@ fi
 for boot_config in \
 	"$BOOT/bootloaders/isolinux/live.cfg.in" \
 	"$BOOT/bootloaders/grub-pc/grub.cfg"; do
-	for expected in 'Try Velcora Linux (live demo)'; do
-		if grep -qF -- "$expected" "$boot_config"; then
-			ok
-		else
-			fail "${boot_config#"$REPO_ROOT"/} must contain $expected"
-		fi
-	done
+	if grep -qF -- 'Try Velcora Linux (live demo)' "$boot_config"; then
+		ok
+	else
+		fail "${boot_config#"$REPO_ROOT"/} must contain Try Velcora Linux (live demo)"
+	fi
 	if grep -qF 'velcora.mode=install' "$boot_config" || grep -qF 'Install Velcora Linux' "$boot_config"; then
 		fail "${boot_config#"$REPO_ROOT"/} must leave installation to the separate Installer ISO"
 	else
