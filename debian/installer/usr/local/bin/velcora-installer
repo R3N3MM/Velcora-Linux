@@ -2,7 +2,25 @@
 ## Launch the Calamares installer from the Velcora live session.
 ## The live user has passwordless sudo; Calamares needs root.
 
-xhost +si:localuser:root >/dev/null 2>&1 || true
+if [ -z "${DISPLAY:-}" ]; then
+	printf '%s\n' \
+		"The Velcora installer needs a graphical desktop." \
+		"Log in to the live Xfce session, then launch Install Velcora from the desktop or Applications menu." >&2
+	exit 1
+fi
+
+if ! command -v xhost >/dev/null 2>&1; then
+	printf '%s\n' "The installer cannot grant display access to its administrator window (xhost is missing)." >&2
+	exit 1
+fi
+
+if ! xhost +si:localuser:root >/dev/null 2>&1; then
+	printf '%s\n' \
+		"The installer could not access the graphical desktop." \
+		"Start it from the live Xfce session, not from a text console." >&2
+	exit 1
+fi
+
 sudo -E calamares
 status=$?
 xhost -si:localuser:root >/dev/null 2>&1 || true

@@ -21,6 +21,8 @@ strings:
 
 sidebar: widget
 navigation: widget
+slideshow: "show.qml"
+slideshowAPI: 2
 
 images:
     productLogo:         "velcora-logo.png"

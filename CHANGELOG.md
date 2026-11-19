@@ -5,6 +5,24 @@ All notable changes to VELCORA Linux are recorded here.  The format follows
 yet at a stable release, so entries use the development version from
 `VERSION`.
 
+## [Unreleased]
+
+### Added
+
+- Separate Live and Debian Installer image build targets; a new Installer
+  profile uses Debian Installer task selection with Xfce preselected and
+  other Debian desktop choices available from the network.
+- `Velcora Tweaks` menu for adding a Debian desktop task, updating the system
+  and launching the VirtualBox Guest Additions helper.
+- Separate release assets and download-page entries for Live and Installer
+  image types.
+
+### Notes
+
+- The new Installer image and Tweaks menu have not yet been built into ISOs or
+  verified in a full installation. Velcora does not publish its own APT
+  repository or metapackages.
+
 ## [0.1.0-dev] - 2026-11-16
 
 First development image.  Not a stable release; see *Known limitations*.

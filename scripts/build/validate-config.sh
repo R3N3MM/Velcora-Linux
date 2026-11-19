@@ -78,12 +78,14 @@ for file in \
 	"$DEBIAN/installer/etc/calamares/settings.conf" \
 	"$DEBIAN/installer/etc/calamares/modules/shellprocess.conf" \
 	"$DEBIAN/installer/etc/calamares/branding/velcora/branding.desc" \
+	"$DEBIAN/installer/etc/calamares/branding/velcora/show.qml" \
 	"$DEBIAN/installer/etc/calamares/branding/velcora/welcome.png" \
 	"$DEBIAN/installer/usr/local/bin/velcora-installer" \
 	"$DEBIAN/installer/usr/local/bin/velcora-install-desktop-icon" \
 	"$DEBIAN/installer/usr/local/bin/velcora-welcome" \
 	"$DEBIAN/installer/usr/local/share/velcora/install-velcora.desktop" \
 	"$DEBIAN/installer/usr/share/applications/velcora-installer.desktop" \
+	"$DEBIAN/installer/usr/share/applications/velcora-tweaks.desktop" \
 	"$DESKTOP/autostart/etc/xdg/autostart/velcora-welcome.desktop" \
 	"$DEBIAN/vm/usr/local/bin/velcora-install-guest-additions" \
 	"$DEBIAN/sudoers/90-velcora-live" \
@@ -101,6 +103,15 @@ for file in \
 	"$BRANDING/fonts/inter/InterVariable.ttf" \
 	"$BRANDING/wallpapers/velcora_wallpaper_datacenter_core.jpg" \
 	"$REPO_ROOT/scripts/build/build-iso.sh" \
+	"$REPO_ROOT/scripts/build/build-installer-iso.sh" \
+	"$REPO_ROOT/scripts/build/generate-installer-profile.sh" \
+	"$REPO_ROOT/scripts/validation/check-installer-iso.sh" \
+	"$REPO_ROOT/installer/README.md" \
+	"$REPO_ROOT/installer/profiles/default.preseed" \
+	"$REPO_ROOT/installer/profiles/velcora.preseed" \
+	"$REPO_ROOT/installer/profiles/velcora.conf" \
+	"$REPO_ROOT/installer/branding-package/control" \
+	"$REPO_ROOT/installer/branding-package/postinst" \
 	"$REPO_ROOT/scripts/build/stage-live-config.sh" \
 	"$REPO_ROOT/scripts/build/render-boot-branding.py" \
 	"$REPO_ROOT/scripts/build/sync-branding-assets.py" \
@@ -111,12 +122,16 @@ done
 for executable in \
 	"$LIVE_DIR/auto/config" \
 	"$REPO_ROOT/scripts/build/build-iso.sh" \
+	"$REPO_ROOT/scripts/build/build-installer-iso.sh" \
+	"$REPO_ROOT/scripts/build/generate-installer-profile.sh" \
+	"$REPO_ROOT/scripts/validation/check-installer-iso.sh" \
 	"$REPO_ROOT/scripts/build/stage-live-config.sh" \
 	"$REPO_ROOT/scripts/release/publish-iso.sh" \
 	"$BOOT/hooks/0100-velcora-branding.hook.chroot" \
 	"$DEBIAN/hooks/0200-velcora-installer.hook.chroot" \
 	"$DEBIAN/hooks/9900-velcora-trim.hook.chroot" \
 	"$DEBIAN/installer/usr/local/bin/velcora-installer" \
+	"$DEBIAN/installer/usr/local/bin/velcora-tweaks" \
 	"$DEBIAN/installer/usr/local/bin/velcora-install-desktop-icon" \
 	"$DEBIAN/installer/usr/local/bin/velcora-welcome" \
 	"$DEBIAN/vm/usr/local/bin/velcora-install-guest-additions"; do
@@ -134,6 +149,12 @@ while IFS= read -r script; do
 	if bash -n "$script"; then ok; else fail "syntax error in ${script#"$REPO_ROOT"/}"; fi
 done < <(find "$REPO_ROOT/scripts" -type f -name '*.sh')
 
+if bash -n "$DEBIAN/installer/usr/local/bin/velcora-tweaks"; then
+	ok
+else
+	fail "syntax error in debian/installer/usr/local/bin/velcora-tweaks"
+fi
+
 for script in \
 	"$LIVE_DIR/auto/config" \
 	"$BOOT/hooks/0100-velcora-branding.hook.chroot" \
@@ -141,7 +162,8 @@ for script in \
 	"$DEBIAN/hooks/9900-velcora-trim.hook.chroot" \
 	"$DEBIAN/installer/usr/local/bin/velcora-installer" \
 	"$DEBIAN/installer/usr/local/bin/velcora-install-desktop-icon" \
-	"$DEBIAN/vm/usr/local/bin/velcora-install-guest-additions"; do
+	"$DEBIAN/vm/usr/local/bin/velcora-install-guest-additions" \
+	"$REPO_ROOT/installer/branding-package/postinst"; do
 	if sh -n "$script"; then ok; else fail "syntax error in ${script#"$REPO_ROOT"/}"; fi
 done
 
@@ -157,6 +179,18 @@ done
 # --- source layout ---------------------------------------------------------
 # Staging must reproduce the live-build tree from the top-level source areas.
 stage_tmp="$(mktemp -d)"
+if "$REPO_ROOT/scripts/build/generate-installer-profile.sh" \
+	--source "$REPO_ROOT" --output "$stage_tmp/velcora.packages"; then
+	if grep -qx velcora-branding "$stage_tmp/velcora.packages" \
+		&& ! grep -qxE 'calamares|calamares-settings-debian|task-xfce-desktop|virtualbox-guest-(utils|x11)' \
+			"$stage_tmp/velcora.packages"; then
+		ok
+	else
+		fail "the Installer profile must include Velcora branding and exclude live-only packages"
+	fi
+else
+	fail "could not generate the Simple-CDD package profile"
+fi
 if bash "$REPO_ROOT/scripts/build/stage-live-config.sh" \
 	--source "$REPO_ROOT" --target "$stage_tmp/live-build" \
 	--allow-missing-generated >/dev/null; then
@@ -178,9 +212,13 @@ for file in \
 	"$stage_tmp/live-build/config/includes.chroot/etc/default/prometheus-node-exporter" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/sudoers.d/90-velcora-live" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/calamares/settings.conf" \
+	"$stage_tmp/live-build/config/includes.chroot/etc/calamares/branding/velcora/branding.desc" \
+	"$stage_tmp/live-build/config/includes.chroot/etc/calamares/branding/velcora/show.qml" \
 	"$stage_tmp/live-build/config/includes.chroot/usr/local/bin/velcora-installer" \
+	"$stage_tmp/live-build/config/includes.chroot/usr/local/bin/velcora-tweaks" \
 	"$stage_tmp/live-build/config/includes.chroot/usr/local/bin/velcora-welcome" \
 	"$stage_tmp/live-build/config/includes.chroot/usr/share/applications/velcora-installer.desktop" \
+	"$stage_tmp/live-build/config/includes.chroot/usr/share/applications/velcora-tweaks.desktop" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/xdg/autostart/velcora-welcome.desktop" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-terminal.xml" \
@@ -255,18 +293,23 @@ else
 	fail "the trim hook must keep English and the fourteen approved locales"
 fi
 
-# Demo and install must be separate boot choices, and the installer entry
-# passes velcora.mode=install so the welcome window can skip its dialog.
+# The Live ISO boots into the demo; the separate Debian Installer ISO owns
+# the direct installation boot menu.
 for boot_config in \
 	"$BOOT/bootloaders/isolinux/live.cfg.in" \
 	"$BOOT/bootloaders/grub-pc/grub.cfg"; do
-	for expected in 'Try Velcora Linux (live demo)' 'Install Velcora Linux' 'velcora.mode=install'; do
+	for expected in 'Try Velcora Linux (live demo)'; do
 		if grep -qF -- "$expected" "$boot_config"; then
 			ok
 		else
 			fail "${boot_config#"$REPO_ROOT"/} must contain $expected"
 		fi
 	done
+	if grep -qF 'velcora.mode=install' "$boot_config" || grep -qF 'Install Velcora Linux' "$boot_config"; then
+		fail "${boot_config#"$REPO_ROOT"/} must leave installation to the separate Installer ISO"
+	else
+		ok
+	fi
 done
 if grep -qF 'velcora-welcome' \
 	"$DESKTOP/autostart/etc/xdg/autostart/velcora-welcome.desktop" \
@@ -584,6 +627,22 @@ if grep -qF 'componentName: velcora' \
 	ok
 else
 	fail "Calamares branding.desc must declare componentName: velcora"
+fi
+if grep -qF 'slideshow: "show.qml"' \
+	"$DEBIAN/installer/etc/calamares/branding/velcora/branding.desc" \
+	&& grep -qF 'slideshowAPI: 2' \
+	"$DEBIAN/installer/etc/calamares/branding/velcora/branding.desc"; then
+	ok
+else
+	fail "Calamares branding.desc must declare a supported slideshow and API"
+fi
+if grep -qF 'import calamares.slideshow 1.0' \
+	"$DEBIAN/installer/etc/calamares/branding/velcora/show.qml" \
+	&& grep -qF 'Presentation {' \
+	"$DEBIAN/installer/etc/calamares/branding/velcora/show.qml"; then
+	ok
+else
+	fail "Velcora Calamares slideshow must use the supported Presentation API"
 fi
 if grep -qF 'Name=Install Velcora' \
 	"$DEBIAN/installer/usr/local/share/velcora/install-velcora.desktop"; then

@@ -9,10 +9,10 @@ set -Eeuo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 LIVE_DIR="$REPO_ROOT/build/live-build"
-WORK_DIR="$REPO_ROOT/build/work"
+WORK_DIR="$REPO_ROOT/build/work/live"
 OUT_DIR="$REPO_ROOT/build/output"
 VERSION="$(tr -d '[:space:]' < "$REPO_ROOT/VERSION")"
-ISO_NAME="velcora-${VERSION}-amd64.iso"
+ISO_NAME="velcora-${VERSION}-live-amd64.iso"
 BUILDER_IMAGE="${VELCORA_BUILDER_IMAGE:-debian:trixie}"
 DOCKER="${DOCKER:-docker}"
 MIN_FREE_GIB="${VELCORA_MIN_FREE_GIB:-15}"

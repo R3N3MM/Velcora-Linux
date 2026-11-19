@@ -1,0 +1,10 @@
+Package: velcora-branding
+Version: 0.1.0-dev
+Section: metapackages
+Priority: optional
+Architecture: all
+Depends: lightdm, lightdm-gtk-greeter, plymouth, plymouth-themes, fontconfig
+Maintainer: Velcora Linux Project <noreply@velcora.invalid>
+Description: Velcora desktop identity and system defaults
+ Velcora's installed system identity, Xfce defaults, fonts, wallpapers,
+ LightDM greeter artwork, icon theme, and Plymouth branding.

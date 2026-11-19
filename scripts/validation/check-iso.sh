@@ -2,7 +2,7 @@
 ## Check that the built ISO is a hybrid BIOS + UEFI image.
 ##
 ## Usage: scripts/validation/check-iso.sh [ISO]
-## Default ISO: build/output/velcora-<VERSION>-amd64.iso
+## Default ISO: build/output/velcora-<VERSION>-live-amd64.iso
 ##
 ## Uses host xorriso when available and otherwise a disposable Debian
 ## container, so the check works on a host without live-build installed.
@@ -11,7 +11,7 @@ set -Eeuo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 VERSION="$(tr -d '[:space:]' < "$REPO_ROOT/VERSION")"
-ISO="${1:-$REPO_ROOT/build/output/velcora-$VERSION-amd64.iso}"
+ISO="${1:-$REPO_ROOT/build/output/velcora-$VERSION-live-amd64.iso}"
 IMAGE="${VELCORA_BUILDER_IMAGE:-debian:trixie}"
 DOCKER="${DOCKER:-docker}"
 

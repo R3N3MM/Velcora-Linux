@@ -5,7 +5,7 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
-.PHONY: help validate lint test test-boot checksum iso publish clean distclean
+.PHONY: help validate lint test test-boot checksum iso iso-live iso-installer publish clean distclean
 
 help: ## Show available targets
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-12s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -19,7 +19,9 @@ lint: validate ## Shellcheck and Python syntax checks
 test: lint ## Verify branding, ISO, checksum and package lists
 	./scripts/validation/check-branding.sh
 	./scripts/validation/check-iso.sh
-	./scripts/validation/checksum.sh
+	./scripts/validation/check-installer-iso.sh
+	./scripts/validation/checksum.sh "build/output/velcora-$$(tr -d '[:space:]' < VERSION)-live-amd64.iso"
+	./scripts/validation/checksum.sh "build/output/velcora-$$(tr -d '[:space:]' < VERSION)-installer-amd64.iso"
 	./scripts/validation/check-packages.sh
 
 test-boot: ## Headless QEMU smoke test (BIOS and UEFI)
@@ -28,10 +30,15 @@ test-boot: ## Headless QEMU smoke test (BIOS and UEFI)
 checksum: ## Verify the ISO SHA-256 checksum
 	./scripts/validation/checksum.sh
 
-iso: validate ## Build the VELCORA live ISO (Docker required)
+iso: iso-live iso-installer ## Build both VELCORA Live and Installer ISOs
+
+iso-live: validate ## Build the Velcora Live desktop ISO
 	./scripts/build/build-iso.sh
 
-publish: ## Publish the built ISO as GitHub release assets (split)
+iso-installer: validate ## Build the dedicated Debian Installer ISO
+	./scripts/build/build-installer-iso.sh
+
+publish: ## Publish the built ISO as GitHub release assets
 	./scripts/release/publish-iso.sh
 
 clean: ## Remove the build workspace and ISO output

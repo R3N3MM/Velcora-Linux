@@ -89,7 +89,7 @@ cp -a "$SOURCE_ROOT/debian/hooks/." "$CONFIG/hooks/normal/"
 cp -a "$SOURCE_ROOT/boot/hooks/." "$CONFIG/hooks/normal/"
 
 # Image contents.  Each tree already mirrors its destination under /.
-for tree in debian/base debian/installer debian/vm \
+for tree in debian/base debian/installer debian/vm debian/live-config \
 	desktop/xfce desktop/lightdm desktop/gtk-3.0 desktop/autostart \
 	desktop/fonts; do
 	copy_tree "$SOURCE_ROOT/$tree" "$INCLUDES"

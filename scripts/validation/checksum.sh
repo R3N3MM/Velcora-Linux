@@ -2,13 +2,13 @@
 ## Verify the SHA-256 checksum of the built ISO.
 ##
 ## Usage: scripts/validation/checksum.sh [ISO]
-## Default ISO: build/output/velcora-<VERSION>-amd64.iso
+## Default ISO: build/output/velcora-<VERSION>-live-amd64.iso
 
 set -Eeuo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 VERSION="$(tr -d '[:space:]' < "$REPO_ROOT/VERSION")"
-ISO="${1:-$REPO_ROOT/build/output/velcora-$VERSION-amd64.iso}"
+ISO="${1:-$REPO_ROOT/build/output/velcora-$VERSION-live-amd64.iso}"
 SUM="$ISO.sha256"
 
 die() { printf 'checksum: %s\n' "$*" >&2; exit 1; }

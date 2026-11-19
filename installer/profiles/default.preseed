@@ -1,0 +1,2 @@
+# Select the Velcora profile automatically in Debian Installer.
+simple-cdd simple-cdd/profiles multiselect velcora

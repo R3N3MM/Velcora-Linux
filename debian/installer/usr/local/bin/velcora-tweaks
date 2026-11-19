@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+## Small post-install setup menu for Velcora systems.
+
+set -Eeuo pipefail
+
+if [[ ! -t 0 || ! -t 1 ]]; then
+	printf '%s\n' 'Open Velcora Tweaks from a terminal to use its interactive menu.' >&2
+	exit 2
+fi
+
+if ! command -v sudo >/dev/null 2>&1; then
+	printf '%s\n' 'Velcora Tweaks needs sudo to change system packages.' >&2
+	exit 1
+fi
+
+install_desktop() {
+	local choice task
+	printf '\nAvailable Debian desktop tasks (downloaded from your configured APT mirror):\n'
+	select choice in 'GNOME' 'KDE Plasma' 'MATE' 'LXDE' 'LXQt' 'Cinnamon' 'Back'; do
+		case "$choice" in
+			GNOME) task=task-gnome-desktop ;;
+			'KDE Plasma') task=task-kde-desktop ;;
+			MATE) task=task-mate-desktop ;;
+			LXDE) task=task-lxde-desktop ;;
+			LXQt) task=task-lxqt-desktop ;;
+			Cinnamon) task=task-cinnamon-desktop ;;
+			Back) return 0 ;;
+			*) printf 'Choose a number from 1 to 7.\n'; continue ;;
+		esac
+		printf 'Installing %s. The existing Xfce desktop will remain installed.\n' "$choice"
+		sudo apt-get update && sudo apt-get install "$task"
+		return
+	done
+}
+
+while true; do
+	printf '\nVelcora Tweaks\n==============\n'
+	select action in 'Install another desktop environment' 'Update Velcora' \
+		'VirtualBox Guest Additions' 'Quit'; do
+		case "$action" in
+			'Install another desktop environment') install_desktop ;;
+			'Update Velcora') sudo apt-get update && sudo apt-get upgrade ;;
+			'VirtualBox Guest Additions')
+				if command -v velcora-install-guest-additions >/dev/null 2>&1; then
+					velcora-install-guest-additions
+				else
+					printf '%s\n' 'The VirtualBox helper is not installed on this system.'
+				fi
+				;;
+			Quit) exit 0 ;;
+			*) printf 'Choose a number from 1 to 4.\n'; continue ;;
+		esac
+		break
+	done
+done

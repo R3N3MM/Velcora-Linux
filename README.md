@@ -8,8 +8,14 @@ Administration.
   Plymouth boot theme.
 - **Desktop:** Xfce with LightDM.  Inter is the UI typeface; JetBrains Mono
   is used only by `xfce4-terminal`.
-- **Installer:** Calamares, started from the live desktop by
-  **Install Velcora**.
+- **Images:** a Live desktop ISO for trying Velcora, plus a separate Debian
+  Installer ISO for installing it directly.
+- **Live installer:** Calamares remains available from the Live desktop.
+- **Desktop choices:** Debian Installer starts with Xfce selected and lets
+  you choose other Debian desktop tasks. `Velcora Tweaks` can add desktops
+  after installation.
+- **Updates:** installed systems use Debian's APT mirrors; Velcora does not
+  have its own signed APT repository yet.
 - **Cloud tooling:** `ansible`, `awscli`, `azure-cli`, `kubernetes-client`,
   `python3`, `git`, `openssh-client` and `yq` from Debian trixie, plus
   inspection, hardening, monitoring, capture, storage/backup and shell
@@ -25,13 +31,14 @@ what is still missing.
 
 ## Download and try it
 
-There is no published release yet; build the image from source with
-`make iso` (see below).  The current image is 2,055,536,640 bytes (1.9 GiB),
-under GitHub's 2 GiB release asset limit, so a release is published as one
-ISO with a checksum file:
+Build both images from source with `make iso` (see below), or build one with
+`make iso-live` or `make iso-installer`. The Live image starts a desktop you
+can try without changing the disk. The Installer image starts Debian
+Installer directly and supports interactive installation.
 
 ```sh
-sha256sum -c velcora-0.1.0-dev-amd64.iso.sha256
+sha256sum -c velcora-0.1.0-dev-live-amd64.iso.sha256
+sha256sum -c velcora-0.1.0-dev-installer-amd64.iso.sha256
 ```
 
 Then boot it in a virtual machine or write it to a USB stick.  Step-by-step
@@ -42,7 +49,7 @@ VirtualBox notes are in
 
 ## Build from source
 
-Requirements: Docker, make, bash and 15 GiB free disk.  The build runs inside
+Requirements: Docker, make, bash and 25 GiB free disk. The build runs inside
 `debian:trixie`, so no Debian build tools are needed on the host.
 
 ```sh
@@ -64,8 +71,8 @@ The ISO and its checksum are written to `build/output/`.  Details are in
 - `boot/` — bootloader menus, Plymouth theme and boot hooks.
 - `build/` — live-build configuration, build output locations and the ISO
   build documentation.
-- `debian/` — os-release, Calamares, apt pins, package lists, hooks and
-  live-session sudoers.
+- `debian/` — os-release, Calamares, apt pins, package lists, hooks,
+  live-session sudoers and Velcora Tweaks.
 - `desktop/` — Xfce, LightDM, GTK and font configuration.
 - `documentation/` — installation and development guides; the remaining
   guides are placeholders.

@@ -1,0 +1,8 @@
+# Keep the user's language, keyboard, account, and disk choices interactive.
+d-i shared/default-x-display-manager select lightdm
+# Debian Installer's task selector starts with Xfce, but leaves the desktop
+# choice visible so users can select another desktop task when desired.
+tasksel tasksel/first multiselect standard, desktop
+tasksel tasksel/first seen false
+tasksel tasksel/desktop multiselect xfce
+tasksel tasksel/desktop seen false
