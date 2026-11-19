@@ -7,7 +7,7 @@ built with live-build inside a `debian:trixie` container.
 
 - Docker (the build and most checks run in containers)
 - `make`, `bash`, `git`
-- 15 GiB free disk and a network connection for a full build
+- 25 GiB free disk and a network connection for both images
 - Optional: `shellcheck`, `xorriso`, `qemu-system-x86`, `ovmf` for the checks
   and boot test on the host; each falls back to a container or is skipped
   with a clear error.
@@ -20,11 +20,13 @@ No live-build, debootstrap or Debian tooling is installed on the host.
 make help       # list targets
 make validate   # static build-configuration checks (seconds)
 make lint       # validate + shellcheck + Python syntax
-make iso        # render branding, stage sources, run live-build
+make iso        # build the Live and Debian Installer images
+make iso-live   # build only the Live desktop ISO
+make iso-installer # build only the Debian Installer DVD
 make test       # lint + branding + ISO structure + checksum + packages
 make test-boot  # headless BIOS and UEFI QEMU smoke test
 make checksum   # verify the ISO against its .sha256
-make publish    # upload the ISO to a GitHub release as one asset
+make publish    # publish both images; oversized files are split into parts
 make clean      # remove build/work and build/output
 make distclean  # also remove in-tree live-build leftovers
 ```
@@ -44,8 +46,10 @@ privileges inside the container; it is never run by CI on pull requests.
 4. `scripts/build/stage-live-config.sh` copies `boot/`, `debian/`,
    `desktop/` and `branding/` fonts into `build/work/live-build/config/`.
 5. `lb config` (from `build/live-build/auto/config`) and `lb build` produce
-   `build/output/velcora-<version>-amd64.iso`, its `.sha256` and
+   `build/output/velcora-<version>-live-amd64.iso`, its `.sha256` and
    `build/output/build.log`.
+6. `scripts/build/build-installer-iso.sh` builds the Simple-CDD profile and
+   Debian Installer DVD with Velcora's selected package set and branding.
 
 ## Layout
 

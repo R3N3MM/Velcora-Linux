@@ -31,6 +31,7 @@ while IFS= read -r helper; do
 done < <(
 	find "$REPO_ROOT/debian/installer/usr/local/bin" \
 		"$REPO_ROOT/debian/vm/usr/local/bin" -type f -print
+	printf '%s\n' "$REPO_ROOT/installer/branding-package/postinst"
 )
 
 (( ${#shell_files[@]} > 0 )) || die "no shell scripts found"

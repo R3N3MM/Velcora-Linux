@@ -1,14 +1,15 @@
 # VELCORA build system
 
-Status: **0.1.0-dev — branded ISO with a Calamares installer.** BIOS and UEFI
-boot reach the branded Xfce desktop, VirtualBox guest tools are preinstalled,
-and **Install Velcora** launches Calamares from the live desktop. An
-end-to-end disk installation still needs a test pass.
+Status: **0.1.0-dev — separate Live and Debian Installer images.** The Live
+ISO boots into branded Xfce with Calamares available from the desktop. The
+Installer ISO boots Debian Installer directly with Velcora's package profile.
+Disk installation still needs an end-to-end test.
 
 ## Decisions
 
 - **Base:** Debian 13 (trixie), amd64 only.
-- **Image:** live-build `iso-hybrid` (BIOS and UEFI) with Calamares.
+- **Images:** live-build hybrid Live ISO and Simple-CDD Debian Installer DVD,
+  both for BIOS and UEFI.
 - **Desktop:** Xfce via `task-xfce-desktop`, LightDM with autologin.
 - **Branding:** Velcora ISO metadata and boot menus, `os-release`, a default
   wallpaper for new users, and Calamares branding derived from
@@ -79,18 +80,21 @@ scripts/maintenance/             guarded commit helper
 testing/boot/                    headless BIOS/UEFI QEMU smoke test
 ```
 
-`make iso` renders `branding/` into `build/generated/`, stages the source
-areas into `build/work/live-build/config/`, and then runs live-build.  The
-rendered files are build artefacts, so they are not committed.
+`make iso-live` renders branding and runs live-build. `make iso-installer`
+creates a Simple-CDD profile from the same package lists, builds the local
+Velcora branding package, then runs Debian Installer image tools. `make iso`
+builds both images.
 
 ## Building
 
-Requirements: Docker, make, bash, 15 GiB free disk.
+Requirements: Docker, make, bash, 25 GiB free disk for both images.
 
 ```sh
 make validate   # fast; checks scripts, lists and version
 make lint       # validate plus shellcheck and Python syntax
-make iso        # 20–40 minutes on a first build, ~2 GB download
+make iso        # build both image types; first build downloads several GB
+make iso-live   # only the Live desktop ISO
+make iso-installer # only the Debian Installer DVD
 make test       # branding, ISO structure, checksum, package resolution
 make test-boot  # headless BIOS and UEFI QEMU smoke test
 ```
@@ -102,8 +106,10 @@ connection failures instead of aborting (`config/apt/apt.conf` in the image,
 The result is written to:
 
 ```text
-build/output/velcora-<version>-amd64.iso
-build/output/velcora-<version>-amd64.iso.sha256
+build/output/velcora-<version>-live-amd64.iso
+build/output/velcora-<version>-live-amd64.iso.sha256
+build/output/velcora-<version>-installer-amd64.iso
+build/output/velcora-<version>-installer-amd64.iso.sha256
 build/output/build.log
 ```
 
@@ -112,13 +118,13 @@ the disk-space check. `make clean` removes `work/` and `output/`.
 
 If `make iso` fails, the container log is on screen and in
 `build/output/build.log`; the live-build tree is preserved in
-`build/work/live-build`.
+`build/work/live` or `build/work/installer-cdd`.
 
 ## Publishing a release
 
-GitHub caps each release asset at 2 GiB, and the ISO is slightly larger, so
-the release script splits it into two parts, writes checksums and publishes
-them with join instructions:
+GitHub caps each release asset at 2 GiB. The release script checks the ISO
+size: it publishes one ISO when it fits, or splits a larger ISO into parts.
+It writes checksums and join instructions when parts are needed:
 
 ```sh
 make publish              # publish the ISO in build/output/
@@ -131,7 +137,8 @@ as a pre-release. Parts and notes are staged in `build/output/release/`.
 
 ## Live session defaults
 
-- User: `velcora`, password: `live`, groups include `sudo`.
+- User: `velcora`, password: `velcora`, groups include `sudo`. These public
+  development credentials are not secure production credentials.
 - Hostname: `velcora`; LightDM logs the user in automatically.
 - The live user has passwordless sudo. Calamares removes
   `/etc/sudoers.d/90-velcora-live` from the installed system; installed
@@ -155,7 +162,7 @@ Boot manually in a VM:
 
 ```sh
 qemu-system-x86_64 -m 4096 -smp 2 -enable-kvm \
-  -cdrom build/output/velcora-<version>-amd64.iso
+  -cdrom build/output/velcora-<version>-live-amd64.iso
 ```
 
 Or write it to a USB stick with `dd`, GNOME Disks or Ventoy. Test both
@@ -174,7 +181,7 @@ Minimum smoke test for the first image:
 
 Create a VM with type **Debian (64-bit)**, at least 4 GB RAM and 2 CPUs,
 VMSVGA graphics and EFI enabled (the default in VirtualBox 7), then attach
-`build/output/velcora-<version>-amd64.iso` to the optical drive and start
+`build/output/velcora-<version>-live-amd64.iso` to the optical drive and start
 it. BIOS and EFI boot both work.
 
 Guest Additions add clipboard sharing, shared folders and automatic
@@ -212,7 +219,7 @@ harmless.
 The live session runs from RAM, so changes are lost at reboot. Use
 **Install Velcora** to install onto disk when you need persistence.
 
-## Verified build
+## Earlier verified build (2026-11-15)
 
 | Field | Value |
 | --- | --- |
@@ -228,7 +235,9 @@ Verified in the live session:
 - BIOS and UEFI boot both reach the Xfce desktop with no keypress, after
   the 30-second boot-menu timeout.
 - LightDM autologin as `velcora`, Xfce panel and terminal working.
-- `sudo` accepts the `live` password; `velcora` is in the `sudo` group.
+- `sudo` accepted the `live` password in that earlier image; `velcora` was
+  in the `sudo` group. The current source configures `velcora` as the live
+  password, but that change still needs an image boot check.
 - VirtualBox Guest Additions 7.2.22: `velcora-install-guest-additions`
   found the mounted host disc and built `vboxguest` and `vboxsf` for
   `6.12.117+deb13-amd64`; the helper reports that the modules load
@@ -243,10 +252,28 @@ Verified in the live session:
 Azure CLI prints Python 3.13 `SyntaxWarning`/`FutureWarning` noise and a
 harmless `rdbms` module warning on first run; the command still works.
 
+## Current ISO boot verification (2026-11-19)
+
+The newly built `0.1.0-dev` ISO reached the Velcora Xfce desktop in a
+disposable QEMU VM under both BIOS and UEFI. The marker was observed twice
+per boot. The VM used software emulation and did not touch host disks. The
+live-password hook is present in the staged image at
+`/usr/lib/live/config/2000-velcora-password`; the published GitHub image is
+still the earlier build listed above, with its historical `live` password.
+The fresh image's interactive password prompt has not yet been confirmed.
+
+Current image SHA-256: `4a0b2ce7ef866b704005f4e5d3dfac624a79740ccf31e9ddfcec5cc59844c549`.
+
+`make test` passes on this image: configuration validation, shell/Python lint,
+branding, hybrid ISO structure, checksum and all 12 package lists (140
+packages resolved against Debian Trixie).
+
 ## Phases
 
 1. Build foundation — configuration, runner, validation. **(done)**
-2. ISO build, boot test and VM integration (VirtualBox Guest Additions). **(done)**
+2. ISO build, BIOS/UEFI boot test and VM integration (VirtualBox Guest
+   Additions). **(done; fresh ISO boots in QEMU, Guest Additions were verified
+   on the earlier build)**
 3. Branding integration — fonts, wallpapers, LightDM, Plymouth, boot menus. **(done)**
 4. Installer and disk installation.  Calamares and its configuration are in
    the image; an end-to-end disk install test is still open.
@@ -254,6 +281,6 @@ harmless `rdbms` module warning on first run; the command still works.
    clients and the `packages/` category tooling are installed; tools outside
    trixie main are skipped by decision (see `cloud/README.md`), and no
    project package repository exists.
-6. CI image builds, signing and release automation.  Workflows and split
+6. CI image builds, signing and release automation. Workflows and size-aware
    release publishing are written; the first tagged run and any signing are
    still open.

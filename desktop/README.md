@@ -19,6 +19,9 @@ staged into `build/work/live-build/config/includes.chroot/` at build time.
   **Try Velcora** or **Install Velcora**, and the installer icon on the
   desktop.  Both check for the live session and do nothing after a disk
   install.
+- **Velcora Tweaks** is available from the applications menu after install.
+  It can add a Debian desktop task, run system updates or launch the VirtualBox
+  Guest Additions helper. Additional desktops come from Debian mirrors.
 
 All eight wallpapers in `branding/wallpapers/` are installed; the default is
 `velcora_wallpaper_datacenter_core.jpg` through the

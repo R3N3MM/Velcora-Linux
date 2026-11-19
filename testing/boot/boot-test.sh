@@ -8,16 +8,17 @@
 ## Usage: testing/boot/boot-test.sh [--iso PATH] [--mode bios|uefi|both]
 ##                                  [--timeout SECONDS] [--keep]
 ##
-## Defaults: build/output/velcora-<VERSION>-amd64.iso, mode both, 300 s.
+## Defaults: build/output/velcora-<VERSION>-live-amd64.iso, mode both;
+##           300 s with KVM, 900 s with software emulation.
 ## Screenshots are written to build/output/boot-test-<mode>.ppm.
 
 set -Eeuo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 VERSION="$(tr -d '[:space:]' < "$REPO_ROOT/VERSION")"
-ISO="$REPO_ROOT/build/output/velcora-$VERSION-amd64.iso"
+ISO="$REPO_ROOT/build/output/velcora-$VERSION-live-amd64.iso"
 MODE="both"
-TIMEOUT=300
+TIMEOUT=""
 KEEP=0
 HELPER="$REPO_ROOT/testing/boot/qemu-screen.py"
 
@@ -43,7 +44,16 @@ case "$MODE" in
 	bios|uefi|both) ;;
 	*) die "--mode must be bios, uefi or both" ;;
 esac
-[[ "$TIMEOUT" =~ ^[0-9]+$ ]] || die "--timeout must be a number of seconds"
+if [[ -n "$TIMEOUT" && ! "$TIMEOUT" =~ ^[0-9]+$ ]]; then
+	die "--timeout must be a number of seconds"
+fi
+if [[ -z "$TIMEOUT" ]]; then
+	if [[ -r /dev/kvm && -w /dev/kvm ]]; then
+		TIMEOUT=300
+	else
+		TIMEOUT=900
+	fi
+fi
 
 [[ -f "$ISO" ]] || die "ISO not found: $ISO (run 'make iso' first)"
 command -v qemu-system-x86_64 >/dev/null 2>&1 \
@@ -107,16 +117,17 @@ run_mode() {
 	log "booting $mode (timeout ${TIMEOUT}s)"
 
 	qemu_args=(
-		-m 4096 -smp 2 -boot d
+		-boot d
 		-display none -vga std -no-reboot
 		-monitor "unix:$sock,server,nowait"
 		-serial "file:$serial"
 		-drive "file=$ISO,media=cdrom,readonly=on"
 	)
-	if [[ -w /dev/kvm ]]; then
-		qemu_args+=(-enable-kvm -cpu host)
+	if [[ -r /dev/kvm && -w /dev/kvm ]]; then
+		qemu_args+=(-m 4096 -smp 2 -enable-kvm -cpu host)
 	else
-		log "KVM is unavailable; using slow TCG emulation"
+		qemu_args+=(-m 6144 -smp 4 -accel "tcg,thread=multi")
+		log "KVM is unavailable; using multithreaded software emulation (up to ${TIMEOUT}s)"
 	fi
 	if [[ "$mode" == "uefi" ]]; then
 		cp "$OVMF_VARS" "$run/OVMF_VARS.fd"

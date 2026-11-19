@@ -4,10 +4,9 @@ Bootloader, Plymouth and initramfs configuration.  These files are staged
 into `build/work/live-build/config/` by
 `scripts/build/stage-live-config.sh`; live-build itself is not edited here.
 
-- `bootloaders/isolinux/`: BIOS menu, entries and colours.  The menu offers
-  **Try Velcora Linux (live demo)**, **Install Velcora Linux** (adds
-  `velcora.mode=install` so the installer opens automatically) and a
-  safe-graphics fallback.
+- `bootloaders/isolinux/`: BIOS menu, entries and colours for the Live image.
+  It offers **Try Velcora Linux (live demo)** and a safe-graphics fallback.
+  The Debian Installer is a separate ISO with its own boot menu.
 - `bootloaders/grub-pc/`: UEFI GRUB entries, theme and timeout.
 - `plymouth/velcora/`: `velcora.plymouth` and `velcora.script`, the animated
   boot theme.  The PNG frame sequence, `background.png` and the progress-bar

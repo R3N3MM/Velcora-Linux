@@ -17,7 +17,8 @@
 - `validation/check-packages.sh`: resolves every package-list entry in a
   `debian:trixie` container.
 - `validation/lint.sh`: shellcheck and Python syntax checks.
-- `release/publish-iso.sh`: splits and publishes the ISO on GitHub releases.
+- `release/publish-iso.sh`: publishes the ISO on GitHub releases, splitting it
+  into parts only when it exceeds the per-asset limit.
 - `maintenance/safe-commit.sh`: guarded commit and push helper.
 
 `make validate` runs the static checks; `make lint` adds the linters;

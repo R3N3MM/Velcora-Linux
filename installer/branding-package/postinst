@@ -1,0 +1,37 @@
+#!/bin/sh
+set -eu
+
+if [ "$1" != configure ]; then
+	exit 0
+fi
+
+release_file="$(readlink -f /etc/os-release 2>/dev/null || true)"
+if [ -n "$release_file" ] && [ -f "$release_file" ]; then
+	version="$(cat /usr/share/velcora/version)"
+	# VERSION is validated by the project as digits, dots, and hyphens.
+	escaped_version="$version"
+	sed -i \
+		-e 's/^NAME=.*/NAME="Velcora Linux"/' \
+		-e "s/^PRETTY_NAME=.*/PRETTY_NAME=\"Velcora Linux $escaped_version\"/" \
+		-e "s/^VERSION=.*/VERSION=\"$escaped_version\"/" \
+		-e "s/^VERSION_ID=.*/VERSION_ID=\"$escaped_version\"/" \
+		-e 's/^ID=.*/ID=velcora/' \
+		-e 's/^ID_LIKE=.*/ID_LIKE=debian/' \
+		"$release_file"
+fi
+
+if command -v plymouth-set-default-theme >/dev/null 2>&1; then
+	plymouth-set-default-theme velcora
+	update-initramfs -u -k all
+fi
+if command -v fc-cache >/dev/null 2>&1; then
+	fc-cache -f
+fi
+if command -v gtk-update-icon-cache >/dev/null 2>&1; then
+	gtk-update-icon-cache -f -t /usr/share/icons/Velcora
+fi
+if command -v update-desktop-database >/dev/null 2>&1; then
+	update-desktop-database -q /usr/share/applications || true
+fi
+
+exit 0

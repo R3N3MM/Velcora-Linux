@@ -5,9 +5,6 @@ The image boots into a live demo.  This window explains that nothing is
 written to disk and offers the two paths a new user needs: keep exploring
 the demo, or start the Calamares installer.
 
-Booting with ``velcora.mode=install`` (the "Install Velcora Linux" entry in
-the boot menu) skips the dialog and opens the installer straight away.
-
 The window only appears in the live session: on an installed system
 /run/live does not exist and the program exits without doing anything.
 """
@@ -17,7 +14,6 @@ import subprocess
 import sys
 
 INSTALLER = "/usr/local/bin/velcora-installer"
-INSTALL_FLAG = "velcora.mode=install"
 
 CSS = b"""
 window {
@@ -72,14 +68,6 @@ button.install:hover {
 
 def in_live_session():
     return os.path.isdir("/run/live")
-
-
-def install_requested():
-    try:
-        with open("/proc/cmdline", encoding="utf-8", errors="replace") as handle:
-            return INSTALL_FLAG in handle.read().split()
-    except OSError:
-        return False
 
 
 def pretty_name():
@@ -180,10 +168,6 @@ def build_window(Gtk, Gdk, GdkPixbuf):
 
 def main():
     if not in_live_session():
-        return 0
-
-    if install_requested():
-        launch_installer()
         return 0
 
     try:
