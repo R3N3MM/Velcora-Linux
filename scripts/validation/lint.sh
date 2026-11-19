@@ -15,11 +15,22 @@ die() { printf 'lint: %s\n' "$*" >&2; exit 1; }
 mapfile -t shell_files < <(
 	find "$REPO_ROOT/scripts" "$REPO_ROOT/testing" -type f -name '*.sh' -print
 	find "$REPO_ROOT/boot/hooks" "$REPO_ROOT/debian/hooks" -type f -name '*.hook.chroot' -print
-	find "$REPO_ROOT/debian/installer/usr/local/bin" "$REPO_ROOT/debian/vm/usr/local/bin" -type f -print
 	printf '%s\n' "$REPO_ROOT/build/live-build/auto/config"
 )
 mapfile -t python_files < <(
 	find "$REPO_ROOT/scripts" "$REPO_ROOT/testing" -type f -name '*.py' -print
+)
+# Helpers in the installer and VM trees have no file extension; sort them by
+# their shebang instead of assuming they are shell scripts.
+while IFS= read -r helper; do
+	if head -n 1 "$helper" | grep -Eq '^#!.*python'; then
+		python_files+=("$helper")
+	else
+		shell_files+=("$helper")
+	fi
+done < <(
+	find "$REPO_ROOT/debian/installer/usr/local/bin" \
+		"$REPO_ROOT/debian/vm/usr/local/bin" -type f -print
 )
 
 (( ${#shell_files[@]} > 0 )) || die "no shell scripts found"

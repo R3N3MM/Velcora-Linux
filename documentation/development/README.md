@@ -24,7 +24,7 @@ make iso        # render branding, stage sources, run live-build
 make test       # lint + branding + ISO structure + checksum + packages
 make test-boot  # headless BIOS and UEFI QEMU smoke test
 make checksum   # verify the ISO against its .sha256
-make publish    # split and upload the ISO to a GitHub release
+make publish    # upload the ISO to a GitHub release as one asset
 make clean      # remove build/work and build/output
 make distclean  # also remove in-tree live-build leftovers
 ```
@@ -103,7 +103,8 @@ or `.build/`; `.gitignore` covers them.
 - `.github/workflows/test.yml` and `package-check.yml` run lint and package
   resolution on every push and pull request.  `build.yml` builds and
   verifies the ISO only on `v*` tags or manual dispatch, uploads the ISO,
-  checksum and log as an artifact and publishes split assets on tags.  The
+  checksum and log as an artifact and publishes the ISO as a release asset on
+  tags (it is split into parts only if a future image exceeds the limit).  The
   first tagged run has not happened yet.
 
 ## Licence

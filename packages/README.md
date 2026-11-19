@@ -47,11 +47,10 @@ service to let a Prometheus server scrape over the network.
 
 Measured in a trixie container with the build's recommends setting: the set
 adds **453 MiB installed** (313 MiB without recommends), which is roughly
-**140–190 MiB compressed** in the squashfs.  The image was already
-2,227,011,584 bytes (2.07 GiB) before this set, so expect about **2.2 GiB**
-and a three-part split release.  The ISO does not fit under 2 GiB; if that
-becomes a requirement, cut from `networking/`, `utilities/` and `storage/`
-first.
+**140–190 MiB compressed** in the squashfs.  The finished ISO is
+2,055,536,640 bytes (1.9 GiB), under the 2,147,483,648-byte GitHub release
+asset limit, so it is published as a single file.  Cut from `networking/`,
+`utilities/` and `storage/` first if a future package set pushes it over.
 
 ## Adding a package
 

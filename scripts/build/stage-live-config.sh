@@ -5,6 +5,7 @@
 ##   boot/       bootloader, Plymouth and initramfs configuration
 ##   desktop/    Xfce, LightDM, GTK, fonts and desktop integration
 ##   debian/     os-release, Calamares, apt sources, package lists and hooks
+##   boot/initramfs/  initramfs-tools configuration for the image
 ##   branding/   the artwork rendered into the image
 ##
 ## This script copies those sources into a live-build tree.  Generated
@@ -65,7 +66,8 @@ done
 log "staging source configuration into $TARGET"
 rm -rf "$CONFIG"
 mkdir -p "$CONFIG/apt" "$CONFIG/archives" "$CONFIG/package-lists" \
-	"$CONFIG/bootloaders" "$CONFIG/hooks/normal" "$INCLUDES"
+	"$CONFIG/bootloaders" "$CONFIG/hooks/normal" "$INCLUDES" \
+	"$CONFIG/includes.chroot_before_packages"
 
 # live-build configuration directories.
 cp -a "$SOURCE_ROOT/debian/apt/." "$CONFIG/apt/"
@@ -92,6 +94,19 @@ for tree in debian/base debian/installer debian/vm \
 	desktop/fonts; do
 	copy_tree "$SOURCE_ROOT/$tree" "$INCLUDES"
 done
+
+# Package documentation trim.  live-build copies this tree in *before* the
+# package lists are installed, so dpkg applies the path-exclude rule while it
+# unpacks every package.  9900-velcora-trim.hook.chroot deletes the rule from
+# the finished image so later apt installs still get documentation.
+install -Dm644 "$SOURCE_ROOT/debian/trim/01_nodoc" \
+	"$CONFIG/includes.chroot_before_packages/etc/dpkg/dpkg.cfg.d/01_nodoc"
+
+# initramfs compression.  Must be in place before the branding hook runs
+# update-initramfs; the file stays in the image so kernel upgrades keep the
+# same setting.
+install -Dm644 "$SOURCE_ROOT/boot/initramfs/compression.conf" \
+	"$INCLUDES/etc/initramfs-tools/conf.d/zz-velcora-compression.conf"
 
 # Branding typeface.  The font binary lives in branding/, not in desktop/.
 install -Dm644 "$SOURCE_ROOT/branding/fonts/inter/InterVariable.ttf" \
@@ -146,6 +161,8 @@ install -Dm644 "$SOURCE_ROOT/boot/plymouth/velcora/velcora.script" \
 	|| chmod +x "$CONFIG/hooks/normal/0200-velcora-installer.hook.chroot"
 [[ -x "$CONFIG/hooks/normal/0100-velcora-branding.hook.chroot" ]] \
 	|| chmod +x "$CONFIG/hooks/normal/0100-velcora-branding.hook.chroot"
+[[ -x "$CONFIG/hooks/normal/9900-velcora-trim.hook.chroot" ]] \
+	|| chmod +x "$CONFIG/hooks/normal/9900-velcora-trim.hook.chroot"
 
 log "staged configuration:"
 find "$CONFIG" -maxdepth 2 -mindepth 1 -type d | sort | sed 's/^/    /'

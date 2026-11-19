@@ -244,10 +244,32 @@ def main() -> int:
         )
         theme = includes / "usr" / "share" / "plymouth" / "themes" / "velcora"
         theme.mkdir(parents=True, exist_ok=True)
-        for stale in list(theme.glob("logo-*.png")) + [theme / "background.png"]:
+        for stale in list(theme.glob("logo-*.png")) + [
+            theme / "background.png",
+            theme / "progress-track.png",
+            theme / "progress-fill.png",
+        ]:
             if stale.exists():
                 stale.unlink()
         render(work / "background.svg", theme / "background.png", 1920, 1080)
+
+        # Progress bar: a flat track and a flat fill.  velcora.script scales
+        # the fill to the reported boot progress, so the images stay tiny and
+        # the initramfs does not grow noticeably.
+        for name, colour in (
+            ("progress-track.png", "#1B2433"),
+            ("progress-fill.png", "#58A6FF"),
+        ):
+            source = work / name.replace(".png", ".svg")
+            write_svg(
+                source,
+                f'<rect width="960" height="12" rx="6" fill="{colour}"/>',
+                960,
+                12,
+                "0 0 960 12",
+            )
+            render(source, theme / name, 960, 12)
+        log(f"wrote progress bar images to {theme}")
 
         viewbox = " ".join(f"{value:g}" for value in FRAME_VIEWBOX)
         for index in range(FRAME_COUNT):

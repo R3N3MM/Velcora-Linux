@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Install Velcora Linux
+GenericName=Velcora Installer
+Comment=Install Velcora Linux on this computer
+Exec=velcora-installer
+Icon=velcora-installer
+Terminal=false
+Categories=System;Qt;
+Keywords=install;installer;calamares;setup;
+StartupNotify=true
+StartupWMClass=calamares

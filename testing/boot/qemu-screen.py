@@ -121,7 +121,8 @@ def check(path: str) -> int:
     )
 
     marker = (
-        len(buckets) >= 64
+        width >= 1024
+        and len(buckets) >= 200
         and bright_fraction >= 0.025
         and (top_fraction >= 0.015 or bottom_fraction >= 0.015)
     )

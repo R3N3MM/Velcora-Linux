@@ -66,7 +66,10 @@ for file in \
 	"$BOOT/plymouth/velcora/velcora.plymouth" \
 	"$BOOT/plymouth/velcora/velcora.script" \
 	"$BOOT/hooks/0100-velcora-branding.hook.chroot" \
+	"$BOOT/initramfs/compression.conf" \
 	"$DEBIAN/hooks/0200-velcora-installer.hook.chroot" \
+	"$DEBIAN/hooks/9900-velcora-trim.hook.chroot" \
+	"$DEBIAN/trim/01_nodoc" \
 	"$DEBIAN/base/etc/os-release" \
 	"$DEBIAN/base/etc/issue" \
 	"$DEBIAN/base/usr/lib/os-release" \
@@ -78,7 +81,10 @@ for file in \
 	"$DEBIAN/installer/etc/calamares/branding/velcora/welcome.png" \
 	"$DEBIAN/installer/usr/local/bin/velcora-installer" \
 	"$DEBIAN/installer/usr/local/bin/velcora-install-desktop-icon" \
+	"$DEBIAN/installer/usr/local/bin/velcora-welcome" \
 	"$DEBIAN/installer/usr/local/share/velcora/install-velcora.desktop" \
+	"$DEBIAN/installer/usr/share/applications/velcora-installer.desktop" \
+	"$DESKTOP/autostart/etc/xdg/autostart/velcora-welcome.desktop" \
 	"$DEBIAN/vm/usr/local/bin/velcora-install-guest-additions" \
 	"$DEBIAN/sudoers/90-velcora-live" \
 	"$DESKTOP/xfce/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" \
@@ -109,8 +115,10 @@ for executable in \
 	"$REPO_ROOT/scripts/release/publish-iso.sh" \
 	"$BOOT/hooks/0100-velcora-branding.hook.chroot" \
 	"$DEBIAN/hooks/0200-velcora-installer.hook.chroot" \
+	"$DEBIAN/hooks/9900-velcora-trim.hook.chroot" \
 	"$DEBIAN/installer/usr/local/bin/velcora-installer" \
 	"$DEBIAN/installer/usr/local/bin/velcora-install-desktop-icon" \
+	"$DEBIAN/installer/usr/local/bin/velcora-welcome" \
 	"$DEBIAN/vm/usr/local/bin/velcora-install-guest-additions"; do
 	require_executable "$executable"
 done
@@ -130,13 +138,15 @@ for script in \
 	"$LIVE_DIR/auto/config" \
 	"$BOOT/hooks/0100-velcora-branding.hook.chroot" \
 	"$DEBIAN/hooks/0200-velcora-installer.hook.chroot" \
+	"$DEBIAN/hooks/9900-velcora-trim.hook.chroot" \
 	"$DEBIAN/installer/usr/local/bin/velcora-installer" \
 	"$DEBIAN/installer/usr/local/bin/velcora-install-desktop-icon" \
 	"$DEBIAN/vm/usr/local/bin/velcora-install-guest-additions"; do
 	if sh -n "$script"; then ok; else fail "syntax error in ${script#"$REPO_ROOT"/}"; fi
 done
 
-for script in "$REPO_ROOT"/scripts/build/*.py; do
+for script in "$REPO_ROOT"/scripts/build/*.py \
+	"$DEBIAN/installer/usr/local/bin/velcora-welcome"; do
 	if python3 -c 'import pathlib,sys; compile(pathlib.Path(sys.argv[1]).read_text(), sys.argv[1], "exec")' "$script"; then
 		ok
 	else
@@ -161,11 +171,17 @@ for file in \
 	"$stage_tmp/live-build/config/bootloaders/isolinux/isolinux.cfg" \
 	"$stage_tmp/live-build/config/hooks/normal/0100-velcora-branding.hook.chroot" \
 	"$stage_tmp/live-build/config/hooks/normal/0200-velcora-installer.hook.chroot" \
+	"$stage_tmp/live-build/config/hooks/normal/9900-velcora-trim.hook.chroot" \
+	"$stage_tmp/live-build/config/includes.chroot_before_packages/etc/dpkg/dpkg.cfg.d/01_nodoc" \
+	"$stage_tmp/live-build/config/includes.chroot/etc/initramfs-tools/conf.d/zz-velcora-compression.conf" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/os-release" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/default/prometheus-node-exporter" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/sudoers.d/90-velcora-live" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/calamares/settings.conf" \
 	"$stage_tmp/live-build/config/includes.chroot/usr/local/bin/velcora-installer" \
+	"$stage_tmp/live-build/config/includes.chroot/usr/local/bin/velcora-welcome" \
+	"$stage_tmp/live-build/config/includes.chroot/usr/share/applications/velcora-installer.desktop" \
+	"$stage_tmp/live-build/config/includes.chroot/etc/xdg/autostart/velcora-welcome.desktop" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" \
 	"$stage_tmp/live-build/config/includes.chroot/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-terminal.xml" \
 	"$stage_tmp/live-build/config/includes.chroot/usr/share/plymouth/themes/velcora/velcora.script" \
@@ -200,13 +216,76 @@ fi
 # --- branding --------------------------------------------------------------
 auto_config="$LIVE_DIR/auto/config"
 for expected in '--iso-application "Velcora Linux"' '--iso-volume "VELCORA"' \
-	'--iso-publisher "Velcora Linux Project"'; do
+	'--iso-publisher "Velcora Linux Project"' \
+	'--chroot-squashfs-compression-type "xz -Xbcj x86 -b 1M -Xdict-size 100%"'; do
 	if grep -qF -- "$expected" "$auto_config"; then
 		ok
 	else
 		fail "auto/config must contain $expected"
 	fi
 done
+
+# The documentation filter is applied before package install and must be
+# removed again by the trim hook, so apt keeps unpacking docs for users.
+nodoc="$DEBIAN/trim/01_nodoc"
+for expected in 'path-exclude=/usr/share/doc/*' 'path-include=/usr/share/doc/*/copyright'; do
+	if grep -qxF -- "$expected" "$nodoc"; then
+		ok
+	else
+		fail "debian/trim/01_nodoc must contain $expected"
+	fi
+done
+trim_hook="$DEBIAN/hooks/9900-velcora-trim.hook.chroot"
+if grep -qF 'rm -f /etc/dpkg/dpkg.cfg.d/01_nodoc' "$trim_hook" \
+	&& grep -qF 'apt-get clean' "$trim_hook"; then
+	ok
+else
+	fail "the trim hook must delete the dpkg filter and clean the apt cache"
+fi
+if grep -qF "find /usr/share/doc -type f ! -name 'copyright*'" "$trim_hook" \
+	&& grep -qF 'fonts-inter-velcora' "$trim_hook" \
+	&& grep -qF 'fonts-jetbrains-mono-velcora' "$trim_hook"; then
+	ok
+else
+	fail "the trim hook must remove leftover package docs but keep copyright and font notices"
+fi
+if grep -qF "keep_locales='en de fr es it pt nl pl ru zh_CN zh_TW ja ko tr ar'" "$trim_hook"; then
+	ok
+else
+	fail "the trim hook must keep English and the fourteen approved locales"
+fi
+
+# Demo and install must be separate boot choices, and the installer entry
+# passes velcora.mode=install so the welcome window can skip its dialog.
+for boot_config in \
+	"$BOOT/bootloaders/isolinux/live.cfg.in" \
+	"$BOOT/bootloaders/grub-pc/grub.cfg"; do
+	for expected in 'Try Velcora Linux (live demo)' 'Install Velcora Linux' 'velcora.mode=install'; do
+		if grep -qF -- "$expected" "$boot_config"; then
+			ok
+		else
+			fail "${boot_config#"$REPO_ROOT"/} must contain $expected"
+		fi
+	done
+done
+if grep -qF 'velcora-welcome' \
+	"$DESKTOP/autostart/etc/xdg/autostart/velcora-welcome.desktop" \
+	&& grep -qF 'in_live_session' "$DEBIAN/installer/usr/local/bin/velcora-welcome"; then
+	ok
+else
+	fail "the welcome window must autostart in the live session only"
+fi
+if grep -qxF 'greeter-hide-users=true' \
+	"$DESKTOP/lightdm/etc/lightdm/lightdm-gtk-greeter.conf.d/50-velcora.conf"; then
+	ok
+else
+	fail "the LightDM greeter must ask for the account name"
+fi
+if grep -qxF 'COMPRESS=xz' "$BOOT/initramfs/compression.conf"; then
+	ok
+else
+	fail "boot/initramfs/compression.conf must set COMPRESS=xz"
+fi
 
 os_release="$DEBIAN/base/etc/os-release"
 for expected in 'NAME="Velcora Linux"' 'ID_LIKE=debian' "VERSION_ID=\"$version\""; do
@@ -327,6 +406,7 @@ fi
 greeter="$DESKTOP/lightdm/etc/lightdm/lightdm-gtk-greeter.conf.d/50-velcora.conf"
 for expected in 'background=/usr/share/backgrounds/velcora/velcora-default.jpg' \
 	'icon-theme-name=Velcora' \
+	'greeter-hide-users=true' \
 	'default-user-image=/usr/share/velcora/logo/velcora-logo.png'; do
 	if grep -qxF "$expected" "$greeter"; then
 		ok
@@ -348,7 +428,8 @@ if grep -qF 'ScriptFile=/usr/share/plymouth/themes/velcora/velcora.script' "$ply
 else
 	fail "Plymouth theme must point at velcora.script"
 fi
-for expected in 'frame_count = 24' 'background.png' 'logo_files'; do
+for expected in 'frame_count = 24' 'background.png' 'logo_files' \
+	'Plymouth.SetBootProgressFunction' 'progress-fill.png'; do
 	if grep -qF "$expected" "$plymouth_script"; then
 		ok
 	else

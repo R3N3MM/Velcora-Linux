@@ -1,9 +1,15 @@
 label live-amd64
-	menu label ^Start Velcora Linux
+	menu label ^Try Velcora Linux (live demo)
 	menu default
 	linux @LINUX@
 	initrd @INITRD@
 	append @APPEND_LIVE@
+
+label live-amd64-install
+	menu label ^Install Velcora Linux
+	linux @LINUX@
+	initrd @INITRD@
+	append @APPEND_LIVE@ velcora.mode=install
 
 label live-amd64-failsafe
 	menu label Start Velcora Linux (safe graphics)

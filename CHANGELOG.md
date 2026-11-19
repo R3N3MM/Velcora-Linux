@@ -16,8 +16,12 @@ First development image.  Not a stable release; see *Known limitations*.
   `build/output/velcora-0.1.0-dev-amd64.iso` plus a SHA-256 file and build
   log.
 - Hybrid BIOS/UEFI image with branded isolinux and GRUB menus, a 30-second
-  boot-menu timeout and a Plymouth theme rendered from
-  `branding/logo/velcora-logo.svg`.
+  boot-menu timeout and an animated Plymouth theme (24-frame whale and a
+  progress bar) rendered from `branding/logo/velcora-logo.svg`.
+- In-ISO live demo: the **Try Velcora Linux (live demo)** boot entry and a
+  welcome window in the live session that offers to keep exploring or to
+  install.  The window reappears on every live boot because the session is
+  not persistent; it does not run on an installed system.
 - Xfce desktop with LightDM, the `Velcora` icon theme, eight wallpapers, and
   Inter as the UI font.  `xfce4-terminal` uses JetBrains Mono 11 while every
   other application keeps Inter.
@@ -37,8 +41,9 @@ First development image.  Not a stable release; see *Known limitations*.
   structure, checksum, package resolution), `make checksum` and
   `make test-boot` (headless BIOS/UEFI QEMU smoke test).
 - GitHub workflows: lint and package resolution on every push and pull
-  request; ISO build, verification, artifact upload and split release assets
-  on `v*` tags or manual dispatch.
+  request; ISO build, verification, artifact upload and release asset
+  publishing on `v*` tags or manual dispatch (the ISO is split only when it
+  exceeds the release asset limit).
 - `scripts/maintenance/safe-commit.sh` with private-folder, size and
   home-path guards.
 - Documentation for installing, building and testing the image; READMEs for
@@ -46,9 +51,11 @@ First development image.  Not a stable release; see *Known limitations*.
 
 ### Verified
 
-- The 2.1 GiB image built from commit `28f96ee` booted on BIOS and UEFI
-  (QEMU/KVM with OVMF), reached LightDM and the Xfce desktop, ran
-  `ansible`, `aws`, `az` and `kubectl`, and shut down cleanly.
+- The current 2,055,536,640-byte image boots on BIOS and UEFI (QEMU/KVM
+  with OVMF), shows the animated whale splash with its progress bar, reaches
+  the Xfce live desktop and starts the welcome demo window.  An earlier
+  image reached LightDM, ran `ansible`, `aws`, `az` and `kubectl`, and shut
+  down cleanly.
 - All 140 package-list entries across the twelve lists resolve in Debian
   trixie.
 - The terminal font selection was checked against `xfconf` in trixie: it
@@ -56,8 +63,6 @@ First development image.  Not a stable release; see *Known limitations*.
 
 ### Known limitations
 
-- The image is about 2.2 GiB and does not fit under 2 GiB, so releases stay
-  split into parts.
 - A complete installation to disk has not been executed end to end.
 - Secure Boot, LUKS installation and dual boot are untested.
 - The empty skeleton folders under `packages/`, `cloud/`, `infrastructure/`,

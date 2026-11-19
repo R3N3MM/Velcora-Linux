@@ -1,0 +1,107 @@
+#!/bin/sh
+## Final image trim and cleanup.
+##
+## Runs inside the chroot after all packages are installed and after the
+## branding hook has generated the initramfs.  It removes the dpkg
+## documentation filter (so future apt installs behave normally), clears
+## build-time caches, lists, logs and temporary files, and prunes any boot
+## files that do not belong to the installed kernel.
+##
+## Nothing here removes a program, driver, man page or licence file.
+
+set -e
+
+# 1. The documentation filter must not survive into the image.  It was
+#    staged through includes.chroot_before_packages so that dpkg applied it
+#    while unpacking packages; afterwards users must get docs again.
+if [ -e /etc/dpkg/dpkg.cfg.d/01_nodoc ]; then
+	rm -f /etc/dpkg/dpkg.cfg.d/01_nodoc
+fi
+test ! -e /etc/dpkg/dpkg.cfg.d/01_nodoc
+
+# 2. APT archives, indices and partial downloads.
+apt-get clean
+rm -rf /var/lib/apt/lists/*
+mkdir -p /var/lib/apt/lists/partial
+rm -f /var/cache/apt/*.bin
+rm -rf /var/cache/apt/archives/partial
+mkdir -p /var/cache/apt/archives/partial
+
+# 3. Installer and package-manager logs, plus rotated copies.
+find /var/log -type f -exec truncate -s 0 {} + 2>/dev/null || true
+
+# 4. Temporary files and per-user caches/history from the build.
+find /tmp -mindepth 1 -delete 2>/dev/null || true
+find /var/tmp -mindepth 1 -delete 2>/dev/null || true
+rm -rf /root/.cache
+rm -f /root/.bash_history
+for home in /home/*; do
+	[ -d "$home" ] || continue
+	rm -rf "$home/.cache"
+	rm -f "$home/.bash_history"
+done
+
+# 5. Keep exactly one kernel: the newest vmlinuz and its matching initrd,
+#    config and System.map.  Normally only one kernel is installed; this
+#    also covers a chroot that carries a stale pair.
+latest="$(ls -1 /boot/vmlinuz-* 2>/dev/null | sort -V | tail -n 1 || true)"
+if [ -n "$latest" ]; then
+	version="${latest#/boot/vmlinuz-}"
+	for file in /boot/vmlinuz-* /boot/initrd.img-* /boot/config-* /boot/System.map-*; do
+		[ -e "$file" ] || continue
+		name="${file##*/}"
+		file_version="${name#vmlinuz-}"
+		file_version="${file_version#initrd.img-}"
+		file_version="${file_version#config-}"
+		file_version="${file_version#System.map-}"
+		if [ "$file_version" != "$version" ]; then
+			printf 'removing stale boot file %s\n' "$file"
+			rm -f "$file"
+		fi
+	done
+fi
+rm -f /boot/*.old
+
+# 6. Package documentation left behind by the bootstrap stage.  The dpkg
+#    filter in /etc/dpkg/dpkg.cfg.d/01_nodoc is staged through
+#    includes.chroot_before_packages, which is too late for the packages
+#    installed before it (systemd, dpkg, libssl, ...), so their READMEs,
+#    changelogs and examples are still in the image.  Remove everything
+#    except copyright/licence files and the hand-written font notices.
+find /usr/share/doc -type f ! -name 'copyright*' \
+	! -path '/usr/share/doc/fonts-inter-velcora/*' \
+	! -path '/usr/share/doc/fonts-jetbrains-mono-velcora/*' \
+	-delete
+find /usr/share/doc -mindepth 1 -type d -empty -delete 2>/dev/null || true
+# Symlinks whose target the filter already removed.
+find /usr/share/doc -xtype l -delete 2>/dev/null || true
+
+# 7. UI message translations.  English plus the fourteen most widely used
+#    desktop languages; programs, fonts and man pages are not affected, and
+#    glibc locales live in /usr/lib/locale, not here.
+keep_locales='en de fr es it pt nl pl ru zh_CN zh_TW ja ko tr ar'
+find /usr/share/locale -mindepth 1 -maxdepth 1 -type d | while IFS= read -r dir; do
+	name="${dir##*/}"
+	keep=0
+	for wanted in $keep_locales; do
+		case "$name" in
+		"$wanted" | "$wanted"_* | "$wanted"@*) keep=1 ;;
+		esac
+	done
+	[ "$keep" -eq 1 ] || rm -rf "$dir"
+done
+
+# 8. Regenerable caches.
+find /var/cache/man -mindepth 1 -delete 2>/dev/null || true
+rm -f /var/cache/debconf/*-old
+
+# 9. Sanity checks for the result.
+test -d /usr/share/doc
+test -d /usr/share/man
+test -s /etc/initramfs-tools/conf.d/zz-velcora-compression.conf
+test -f /usr/share/doc/fonts-inter-velcora/LICENSE.txt
+test -f /usr/share/doc/fonts-jetbrains-mono-velcora/OFL.txt
+
+printf 'velcora trim: %s docs, %s locales (copyright files kept)\n' \
+	"$(du -sh /usr/share/doc | cut -f1)" \
+	"$(du -sh /usr/share/locale | cut -f1)"

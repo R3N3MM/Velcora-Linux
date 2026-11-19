@@ -1,0 +1,11 @@
+# Installed only while the image is assembled, then removed by
+# 9900-velcora-trim.hook.chroot so the finished system is unaffected.
+#
+# Package documentation under /usr/share/doc is the largest removable block
+# in the image.  Skipping it keeps the ISO inside GitHub's 2 GiB per-asset
+# limit.  Every copyright and licence file is kept, so the image remains
+# licence-compliant, and man pages live in /usr/share/man, which is not
+# touched.
+path-exclude=/usr/share/doc/*
+path-include=/usr/share/doc/*/copyright
+path-include=/usr/share/doc/*/copyright.*

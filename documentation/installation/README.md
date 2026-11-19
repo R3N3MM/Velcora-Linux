@@ -14,13 +14,11 @@ build the image from source with the development instructions
 make iso
 ```
 
-The image is about 2.2 GiB, so it will not fit under GitHub's 2 GiB release
-asset limit.  When a release is published it will be attached in parts
-together with a checksum file, and the download is reassembled and verified
-like this:
+The image is 2,055,536,640 bytes (1.9 GiB), which is under GitHub's
+2,147,483,648-byte release asset limit, so it is published as one file with a
+checksum file:
 
 ```sh
-cat velcora-0.1.0-dev-amd64.iso.part* > velcora-0.1.0-dev-amd64.iso
 sha256sum -c velcora-0.1.0-dev-amd64.iso.sha256
 ```
 
@@ -30,6 +28,13 @@ sha256sum -c velcora-0.1.0-dev-amd64.iso.sha256
 2 CPUs, attach the ISO to the optical drive, and boot.  Both BIOS and UEFI
 boot work.  VirtualBox notes, including Guest Additions, are in
 `build/README.md`.
+
+The boot menu offers two ways in:
+
+- **Try Velcora Linux (live demo)** — the default.  Starts the live session
+  and writes nothing to disk.
+- **Install Velcora Linux** — starts the same live session and opens the
+  installer automatically.
 
 **USB stick**: write the ISO directly, not as a file copy.
 
@@ -46,19 +51,29 @@ firmware settings.  Secure Boot has not been tested with the live image.
 
 ## 3. Live session
 
+- The boot menu's **Try Velcora Linux** entry opens the live demo.  A
+  welcome window explains that nothing is written to disk and offers
+  **Try Velcora** and **Install Velcora**; closing it leaves you in the
+  demo.  The window appears on every boot of the live media, including
+  after a restart, because the session is not persistent.
 - The live user is `velcora`; the live password is `live`.  The session logs
   in automatically.
 - The live user has **passwordless** sudo.  This exists only in the live
   session.
 - The live session runs from RAM: changes are lost at reboot.
+- Interface translations ship for English, German, French, Spanish, Italian,
+  Portuguese, Dutch, Polish, Russian, Simplified and Traditional Chinese,
+  Japanese, Korean, Turkish and Arabic.  Other languages fall back to
+  English.
 - `sudo -v` should succeed without a prompt; `ansible --version`,
   `aws --version`, `az version` and `kubectl version --client` are the
   quickest check that the cloud tooling is present.
 
 ## 4. Install to disk
 
-Start **Install Velcora** from the live desktop, or run `velcora-installer`
-in a terminal.  It starts Calamares with root privileges through the live
+Choose **Install Velcora Linux** in the boot menu, click **Install Velcora**
+in the welcome window, use the desktop icon, or run `velcora-installer` in
+a terminal.  Calamares starts with root privileges through the live
 session's passwordless sudo.
 
 Calamares asks for language, keyboard, disk layout, users and a summary

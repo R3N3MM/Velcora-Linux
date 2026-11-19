@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Velcora Welcome
+Comment=Choose between the live demo and installing Velcora Linux
+Exec=sh -c "sleep 3; exec velcora-welcome"
+OnlyShowIn=XFCE;
+NoDisplay=true
+StartupNotify=false
+X-GNOME-Autostart-enabled=true
+X-GNOME-Autostart-Delay=3

@@ -1,0 +1,206 @@
+#!/usr/bin/env python3
+"""Velcora Linux live-session welcome window.
+
+The image boots into a live demo.  This window explains that nothing is
+written to disk and offers the two paths a new user needs: keep exploring
+the demo, or start the Calamares installer.
+
+Booting with ``velcora.mode=install`` (the "Install Velcora Linux" entry in
+the boot menu) skips the dialog and opens the installer straight away.
+
+The window only appears in the live session: on an installed system
+/run/live does not exist and the program exits without doing anything.
+"""
+
+import os
+import subprocess
+import sys
+
+INSTALLER = "/usr/local/bin/velcora-installer"
+INSTALL_FLAG = "velcora.mode=install"
+
+CSS = b"""
+window {
+  background-color: #0B0F17;
+}
+label {
+  color: #F0F6FC;
+  font-family: "Inter", sans-serif;
+}
+.title {
+  font-size: 30px;
+  font-weight: 700;
+  color: #F0F6FC;
+}
+.subtitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #58A6FF;
+}
+.body {
+  font-size: 14px;
+  color: #C9D1DB;
+}
+.footnote {
+  font-size: 12px;
+  color: #8B949E;
+}
+button {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 9px 20px;
+  border-radius: 6px;
+  border: 1px solid #303B4D;
+  background-image: none;
+  background-color: #161C26;
+  color: #F0F6FC;
+  box-shadow: none;
+}
+button:hover {
+  background-color: #1F2733;
+}
+button.install {
+  background-color: #1F6FEB;
+  border-color: #1F6FEB;
+  color: #FFFFFF;
+}
+button.install:hover {
+  background-color: #388BFD;
+}
+"""
+
+
+def in_live_session():
+    return os.path.isdir("/run/live")
+
+
+def install_requested():
+    try:
+        with open("/proc/cmdline", encoding="utf-8", errors="replace") as handle:
+            return INSTALL_FLAG in handle.read().split()
+    except OSError:
+        return False
+
+
+def pretty_name():
+    try:
+        with open("/etc/os-release", encoding="utf-8", errors="replace") as handle:
+            for line in handle:
+                if line.startswith("PRETTY_NAME="):
+                    return line.split("=", 1)[1].strip().strip('"')
+    except OSError:
+        pass
+    return "Velcora Linux"
+
+
+def launch_installer():
+    subprocess.Popen([INSTALLER], start_new_session=True)
+
+
+def build_window(Gtk, Gdk, GdkPixbuf):
+    window = Gtk.Window(title="Velcora Linux")
+    window.set_default_size(620, 560)
+    window.set_position(Gtk.WindowPosition.CENTER)
+    window.set_resizable(False)
+    window.set_keep_above(True)
+
+    provider = Gtk.CssProvider()
+    provider.load_from_data(CSS)
+    Gtk.StyleContext.add_provider_for_screen(
+        Gdk.Screen.get_default(),
+        provider,
+        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
+    )
+
+    outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=18)
+    outer.set_border_width(34)
+    window.add(outer)
+
+    logo_path = "/usr/share/velcora/logo/velcora-logo.png"
+    if os.path.isfile(logo_path):
+        try:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                logo_path, 120, 120, True
+            )
+            logo = Gtk.Image.new_from_pixbuf(pixbuf)
+        except Exception:
+            logo = Gtk.Image.new_from_file(logo_path)
+        logo.set_halign(Gtk.Align.CENTER)
+        outer.pack_start(logo, False, False, 0)
+
+    title = Gtk.Label(label="Velcora Linux")
+    title.get_style_context().add_class("title")
+    outer.pack_start(title, False, False, 0)
+
+    subtitle = Gtk.Label(label="LIVE DEMO")
+    subtitle.get_style_context().add_class("subtitle")
+    outer.pack_start(subtitle, False, False, 0)
+
+    body = Gtk.Label()
+    body.set_markup(
+        "Welcome. This is the live demo, running entirely from the USB stick "
+        "or DVD.\n\nNothing is written to your disk and nothing is changed on "
+        "your computer. Explore the desktop, the applications and the "
+        "settings at your own pace.\n\nIf you restart, the demo starts fresh: "
+        "files and settings from this session are not kept."
+    )
+    body.set_line_wrap(True)
+    body.set_max_width_chars(64)
+    body.set_justify(Gtk.Justification.CENTER)
+    body.get_style_context().add_class("body")
+    outer.pack_start(body, False, False, 0)
+
+    footnote = Gtk.Label(
+        label="You can start the installer at any time from the desktop "
+        "icon or the Applications menu."
+    )
+    footnote.set_line_wrap(True)
+    footnote.set_max_width_chars(64)
+    footnote.set_justify(Gtk.Justification.CENTER)
+    footnote.get_style_context().add_class("footnote")
+    outer.pack_start(footnote, False, False, 0)
+
+    buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+    buttons.set_halign(Gtk.Align.CENTER)
+    outer.pack_end(buttons, False, False, 0)
+
+    try_now = Gtk.Button(label="Try Velcora")
+    try_now.connect("clicked", lambda _button: window.destroy())
+    buttons.pack_start(try_now, False, False, 0)
+
+    install = Gtk.Button(label="Install Velcora")
+    install.get_style_context().add_class("install")
+    install.connect("clicked", lambda _button: (launch_installer(), window.destroy()))
+    buttons.pack_start(install, False, False, 0)
+
+    window.connect("destroy", Gtk.main_quit)
+    window.show_all()
+    return window
+
+
+def main():
+    if not in_live_session():
+        return 0
+
+    if install_requested():
+        launch_installer()
+        return 0
+
+    try:
+        import gi
+
+        gi.require_version("Gtk", "3.0")
+        from gi.repository import Gtk, Gdk, GdkPixbuf
+    except (ImportError, ValueError):
+        # Without GTK there is no usable dialog; leave the live session
+        # untouched and let the user start the installer from the desktop.
+        print("velcora-welcome: GTK 3 is unavailable", file=sys.stderr)
+        return 0
+
+    build_window(Gtk, Gdk, GdkPixbuf)
+    Gtk.main()
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

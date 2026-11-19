@@ -29,7 +29,7 @@ lb config noauto \
 	--memtest none \
 	--win32-loader false \
 	--firmware-chroot true \
-	--chroot-squashfs-compression-type xz \
+	--chroot-squashfs-compression-type "xz -Xbcj x86 -b 1M -Xdict-size 100%" \
 	--checksums sha256 \
 	--iso-application "Velcora Linux" \
 	--iso-volume "VELCORA" \

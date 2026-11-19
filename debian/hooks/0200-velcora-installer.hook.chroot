@@ -7,10 +7,20 @@ set -e
 
 rm -rf /etc/calamares/branding/debian
 rm -f /usr/share/applications/calamares-install-debian.desktop
+# calamares-settings-debian diverts Calamares' own desktop entry to .orig and
+# ships a Debian-branded launcher instead; both are replaced by the Velcora
+# entry below.
+rm -f /usr/share/applications/calamares.desktop
+rm -f /usr/share/applications/calamares.desktop.orig
 rm -f /etc/xdg/autostart/calamares-desktop-icon.desktop
 rm -f /usr/bin/calamares-install-debian /usr/bin/add-calamares-desktop-icon
 rm -f /usr/share/pixmaps/install-debian.png
 
+test -x /usr/local/bin/velcora-welcome
+test -f /usr/share/applications/velcora-installer.desktop
+test ! -e /usr/share/applications/calamares.desktop.orig
+test ! -e /usr/share/applications/calamares.desktop
+test -x /usr/local/bin/velcora-installer
 test -f /etc/calamares/branding/velcora/branding.desc
 grep -qx 'branding: velcora' /etc/calamares/settings.conf
 

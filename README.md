@@ -25,14 +25,12 @@ what is still missing.
 
 ## Download and try it
 
-Prebuilt live ISOs are published on the
-[releases page](https://github.com/R3N3MM/Velcora-Linux/releases).
-
-GitHub caps a release asset at 2 GiB, so each ISO is split into parts.
-Download the parts, join them, and verify the checksum:
+There is no published release yet; build the image from source with
+`make iso` (see below).  The current image is 2,055,536,640 bytes (1.9 GiB),
+under GitHub's 2 GiB release asset limit, so a release is published as one
+ISO with a checksum file:
 
 ```sh
-cat velcora-0.1.0-dev-amd64.iso.part* > velcora-0.1.0-dev-amd64.iso
 sha256sum -c velcora-0.1.0-dev-amd64.iso.sha256
 ```
 

@@ -15,8 +15,10 @@ staged into `build/work/live-build/config/includes.chroot/` at build time.
 - `gtk-3.0/`: GTK icon theme and font defaults for non-Xfce GTK tools.
 - `fonts/`: fontconfig preference for Inter Variable; the font binaries are
   staged from `branding/fonts/inter/`.
-- `autostart/`: the live-only helper that puts **Install Velcora** on the
-  desktop.
+- `autostart/`: the live-only helpers: the welcome window that offers
+  **Try Velcora** or **Install Velcora**, and the installer icon on the
+  desktop.  Both check for the live session and do nothing after a disk
+  install.
 
 All eight wallpapers in `branding/wallpapers/` are installed; the default is
 `velcora_wallpaper_datacenter_core.jpg` through the
