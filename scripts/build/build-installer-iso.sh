@@ -53,7 +53,10 @@ log "The DVD contains the selected package set for offline installation"
 	"$BUILDER_IMAGE" \
 	bash -euo pipefail -c '
 		export DEBIAN_FRONTEND=noninteractive
-		printf '%s\n' 'Acquire::Retries "8";' 'Acquire::http::Timeout "30";' > /etc/apt/apt.conf.d/90retries
+		cat > /etc/apt/apt.conf.d/90retries <<APT
+Acquire::Retries "8";
+Acquire::http::Timeout "30";
+APT
 		apt-get update
 		apt-get install -y --no-install-recommends \
 			simple-cdd dpkg-dev python3 librsvg2-bin ca-certificates \
